@@ -315,12 +315,14 @@ async function previewBytes(){
   S.eng.mp3=typeof lamejs!=='undefined';
   const buf=makeDemo();
   S.src={name:'demo_sospechoso.flac',size:0,fmt:'FLAC',bits:16,rate:44100,ch:2,dur:buf.duration,buffer:buf,demo:true};
+  try{const w=encWAV([0,1].map(c=>buf.getChannelData(c)),buf.sampleRate,32,false);S.src.raw=w.buffer.slice(w.byteOffset,w.byteOffset+w.byteLength)}catch(e){}
   S.tags={...emptyTags(),title:'Demo sospechoso',artist:'Lossless Buddy',album:'Muestras de prueba',track:'1/1',year:'2026',genre:'Electronic'};
   bindDial();bindNav();locate(curEntry());$('#manualBox').inert=true;resetDial();renderTagForm();renderAll();renderOuts();restLadder();requestAnimationFrame(loop);setTimeout(()=>crt(S.mode==='preset'),reduce?0:400);
   try{if('AudioEncoder' in window){const r=await AudioEncoder.isConfigSupported({codec:'mp4a.40.2',sampleRate:44100,numberOfChannels:2,bitrate:256000});S.eng.aac=!!r.supported;
     const chk=async c=>{try{return(await AudioEncoder.isConfigSupported({codec:'mp4a.40.2',sampleRate:44100,numberOfChannels:2,bitrate:256000,...c})).supported}catch(e){return false}};
     if(S.eng.aac){S.eng.aacVbr=await chk({bitrateMode:'variable'});S.eng.aacAdts=await chk({aac:{format:'adts'}});S.eng.aacHe=await chk({codec:'mp4a.40.5',bitrate:64000})}
     try{S.eng.opus=!!(await AudioEncoder.isConfigSupported({codec:'opus',sampleRate:48000,numberOfChannels:2,bitrate:128000})).supported}catch(e){}}}catch(e){}
+  if(typeof createAacModule!=='undefined'&&typeof WebAssembly==='object'){S.eng.aac=true;S.eng.aacAdts=true}
   ensureSupported();renderAll();
   const pv=await previewBytes();
   if(pv){await loadFile(new File([pv],'Musinova - Jungle Breakbeat.flac'));if(S.src){S.src.demo=true;renderAll()}return}
