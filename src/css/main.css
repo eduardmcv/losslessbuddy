@@ -9,9 +9,14 @@ button{font:inherit;color:inherit}
 
 /* header */
 header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-inline:4px}
-.brand{display:flex;align-items:baseline;gap:10px}
-.brand b{font-family:var(--f-silk);font-size:22px;letter-spacing:.06em;text-transform:uppercase;color:var(--strong);font-weight:600}
-.brand span{font-family:var(--f-mono);font-size:13px;color:var(--mute)}
+.brand{display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-width:0}
+.brand b{font-family:"Bungee",var(--f-silk);font-weight:400;font-size:27px;line-height:1;letter-spacing:.01em;text-transform:uppercase;color:var(--strong)}
+/* 70s/80s hi-fi sunset stripes: warm only, so it reads as retro trim rather than a rainbow flag */
+.stripes{display:flex;gap:3px;height:26px;transform:skewX(-22deg);margin-left:10px}
+.stripes i{width:7px;border-radius:1px}
+.stripes i:nth-child(1){background:#f4c242}.stripes i:nth-child(2){background:#f08a24}.stripes i:nth-child(3){background:#df4a26}.stripes i:nth-child(4){background:#9c2c2f}
+.brand .model{display:flex;align-items:center;gap:8px;font-family:var(--f-silk);font-weight:600;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--mute)}
+.brand .model em{font-style:normal;letter-spacing:.12em;padding:2px 7px;border:1.5px solid currentColor;border-radius:3px}
 .hright{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
 .engines{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
 .eng{display:flex;align-items:center;gap:7px;font-family:var(--f-silk);font-size:12px;letter-spacing:.14em;color:var(--mute)}
@@ -537,3 +542,8 @@ body.is-playing .disc{animation:spin 1.8s linear infinite}
   .dialbox .pad{justify-self:end;align-self:center;margin:0}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:520px){
+  .brand b{font-size:21px}
+  .stripes{height:21px}.stripes i{width:6px}
+  .brand .model{flex-basis:100%;padding-left:2px}
+}
