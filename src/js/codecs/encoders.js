@@ -99,7 +99,7 @@ async function encFLAC(chans,rate,bps,dither,prog,blocks=[]){
 }
 
 async function encMP3(chans,rate,kbps,dither,prog){
-  if(typeof lamejs==='undefined')throw new Error('El codificador MP3 no se ha cargado. Recarga la página.');
+  if(typeof lamejs==='undefined')throw new Error(T('El codificador MP3 no se ha cargado. Recarga la página.'));
   const enc=new lamejs.Mp3Encoder(chans.length,rate,kbps),parts=[],len=chans[0].length,B=1152*32;
   const q=chans.map(c=>{const i32=quant(c,16,dither),o=new Int16Array(len);o.set(i32);return o});
   for(let off=0,k=0;off<len;off+=B,k++){
@@ -119,7 +119,7 @@ async function encAAC(chans,rate,kbps,prog,opt={}){
     const{frames,asc}=await encAACwasm(chans,rate,kbps,prog);
     return opt.adts?concat(frames.map(f=>adtsFrame(f,asc))):m4aMux(frames,rate,ch,asc,kbps,1024,opt.meta,{brand:opt.brand});
   }
-  if(!ok)throw new Error(`Este navegador no codifica ${opt.prof==='he'?'HE-AAC':'AAC'}${opt.mode==='variable'?' VBR':''}${opt.adts?' en .aac':''} a ${kbps} kbps / ${fmtRate(rate)}. Prueba otra combinación o Chrome/Edge en Windows o macOS.`);
+  if(!ok)throw new Error(T('Este navegador no codifica {c} a {kbps} kbps / {r}. Prueba otra combinación o Chrome/Edge en Windows o macOS.',{c:(opt.prof==='he'?'HE-AAC':'AAC')+(opt.mode==='variable'?' VBR':'')+(opt.adts?' (.aac)':''),kbps,r:fmtRate(rate)}));
   let asc=null;
   const parts=[];let err=null;
   const enc=new AudioEncoder({output:(c,m)=>{const b=new Uint8Array(c.byteLength);c.copyTo(b);parts.push(b);const d=m&&m.decoderConfig&&m.decoderConfig.description;if(!asc&&d)asc=d instanceof ArrayBuffer?new Uint8Array(d.slice(0)):new Uint8Array(d.buffer.slice(d.byteOffset,d.byteOffset+d.byteLength))},error:x=>err=x});
@@ -147,14 +147,14 @@ function aacWasmModule(){
 }
 async function encAACwasm(chans,rate,kbps,prog){
   const A=await aacWasmModule(),ch=chans.length,len=chans[0].length,ctx=A.init(ch,rate,kbps*1000);
-  if(!ctx)throw new Error(`El codificador AAC no admite ${kbps} kbps a ${fmtRate(rate)}.`);
+  if(!ctx)throw new Error(T('El codificador AAC no admite {kbps} kbps a {r}.',{kbps,r:fmtRate(rate)}));
   const F=A.frameSize(ctx),xp=A.xd(ctx),asc=A.m.HEAPU8.slice(xp,xp+A.xdSize(ctx)),frames=[],buf=new Float32Array(F*ch),bytes=new Uint8Array(buf.buffer);
   const drain=()=>{let n;while((n=A.receive(ctx))>0){const p=A.data(ctx);frames.push(A.m.HEAPU8.slice(p,p+n))}};
   for(let off=0,k=0;off<len;off+=F,k++){
     const n=Math.min(F,len-off);if(n<F)buf.fill(0);
     for(let c=0;c<ch;c++){const x=chans[c];for(let i=0;i<n;i++)buf[i*ch+c]=x[off+i]}
     A.m.HEAPU8.set(bytes,A.input(ctx,bytes.length));
-    if(A.send(ctx,BigInt(off))<0)throw new Error('El codificador AAC ha fallado.');
+    if(A.send(ctx,BigInt(off))<0)throw new Error(T('El codificador AAC ha fallado.'));
     drain();if(k%300===299){prog(off/len);await tick()}
   }
   A.flush(ctx);drain();A.reset(ctx);

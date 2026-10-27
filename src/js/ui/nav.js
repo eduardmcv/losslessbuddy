@@ -1,15 +1,15 @@
 /* ---------- preset browser (LCD menu) ---------- */
 const NS={c:0,b:0,m:0,col:2,q:'',hi:0,req:false};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const catName=id=>NAVCATS.find(c=>c[0]===id)[1];
-const fullName=e=>fold(e.name).startsWith(fold(e.brand))?e.name:e.brand+' '+e.name;
+const catName=id=>T(NAVCATS.find(c=>c[0]===id)[1]);
+const fullName=e=>{const n=T(e.name),b=T(e.brand);return fold(n).startsWith(fold(b))?n:b+' '+n};
 const curEntry=()=>ENTRIES.find(e=>e.id===S.sel)||ENTRIES[0];
 const packMode=()=>S.mode==='preset'&&curEntry().pack;
 function entrySpec(e){
-  if(e.pack)return'8 VERSIONES · 30 S · ZIP';
+  if(e.pack)return T('8 VERSIONES · 30 S · ZIP');
   const o={...BASE,...e.o},f=FMT[o.fmt],cod=CODECS.find(c=>c.id===codecOf(o.fmt)).name;
-  if(!canEncode(o.fmt))return cod+' · NO DISPONIBLE EN ESTE NAVEGADOR';
-  return[f.lossless?`${cod} ${o.bits===32?'32F':o.bits+' BIT'}`:`${cod} ${o.kbps}`,'.'+extOf(o),o.rate?fmtRate(o.rate):'FREC. ORIGINAL',o.mono?'MONO':null,o.norm==='lufs'?num(o.lufs,0)+' LUFS':null].filter(Boolean).join(' · ').toUpperCase();
+  if(!canEncode(o.fmt))return cod+' · '+T('NO DISPONIBLE EN ESTE NAVEGADOR');
+  return[f.lossless?`${cod} ${o.bits===32?'32F':o.bits+' BIT'}`:`${cod} ${o.kbps}`,'.'+extOf(o),o.rate?fmtRate(o.rate):T('FREC. ORIGINAL'),o.mono?'MONO':null,o.norm==='lufs'?num(o.lufs,0)+' LUFS':null].filter(Boolean).join(' · ').toUpperCase();
 }
 const results=()=>{const ws=fold(NS.q).split(/\s+/).filter(Boolean);return ENTRIES.filter(e=>ws.every(w=>e.hay.includes(w)))};
 function locate(e){NS.c=NAV.findIndex(c=>c.id===e.cat);const cat=NAV[NS.c];NS.b=cat.brands.findIndex(b=>b.name===e.brand);NS.m=cat.brands[NS.b].items.indexOf(e)}
@@ -21,26 +21,26 @@ function renderNav(){
   $('#navCount').textContent=ENTRIES.length+' PRESETS';
   if(NS.req){
     box.className='navbody';
-    if(!$('#reqIn'))box.innerHTML=`<div class="nreq"><label for="reqIn">¿QUÉ EQUIPO O DESTINO FALTA?</label><input id="reqIn" maxlength="140" placeholder="MARCA, MODELO Y AÑO" autocomplete="off"><div class="nrow"><button class="nbtn" id="reqSend">ENVIAR</button><button class="nbtn" id="reqCancel">CANCELAR</button></div><p id="reqMsg">LO REVISAMOS Y LO AÑADIMOS A LA LISTA.</p></div>`;
+    if(!$('#reqIn'))box.innerHTML=`<div class="nreq"><label for="reqIn">${T('¿QUÉ EQUIPO O DESTINO FALTA?')}</label><input id="reqIn" maxlength="140" placeholder="${T('MARCA, MODELO Y AÑO')}" autocomplete="off"><div class="nrow"><button class="nbtn" id="reqSend">${T('ENVIAR')}</button><button class="nbtn" id="reqCancel">${T('CANCELAR')}</button></div><p id="reqMsg">${T('LO REVISAMOS Y LO AÑADIMOS A LA LISTA.')}</p></div>`;
     $('#navDet').innerHTML='';return;
   }
   if(NS.q.trim()){
     const rs=results();NS.hi=Math.max(0,Math.min(NS.hi,rs.length-1));focusE=rs[NS.hi];
     box.className='navbody flat';
-    box.innerHTML=rs.length?`<ul class="ncol" role="listbox" aria-label="Resultados">${rs.map((e,i)=>`<li role="option" aria-selected="${e.id===S.sel}" class="${e.id===S.sel?'hi sel':''} ${i===NS.hi?'cur':''}" data-eid="${e.id}"><span class="np">${esc(catName(e.cat))} › ${esc(e.brand)}</span><span class="nn">${esc(e.name)}</span><span class="ny">${esc(e.years)}</span></li>`).join('')}</ul>`
-      :`<div class="nempty">NADA PARA «${esc(NS.q.toUpperCase())}».<br>PULSA ＋ PEDIR Y LO AÑADIMOS.</div>`;
+    box.innerHTML=rs.length?`<ul class="ncol" role="listbox" aria-label="${T('Resultados')}">${rs.map((e,i)=>`<li role="option" aria-selected="${e.id===S.sel}" class="${e.id===S.sel?'hi sel':''} ${i===NS.hi?'cur':''}" data-eid="${e.id}"><span class="np">${esc(catName(e.cat))} › ${esc(T(e.brand))}</span><span class="nn">${esc(T(e.name))}</span><span class="ny">${esc(T(e.years))}</span></li>`).join('')}</ul>`
+      :`<div class="nempty">${T('NADA PARA «{q}».',{q:esc(NS.q.toUpperCase())})}<br>${T('PULSA ＋ PEDIR Y LO AÑADIMOS.')}</div>`;
   }else{
     const cat=NAV[NS.c],br=cat.brands[NS.b]||cat.brands[0];focusE=NS.m>=0?br.items[NS.m]:null;
     const li=(cls,attr,html)=>`<li role="option" class="${cls}" ${attr}>${html}</li>`;
     const back=t=>`<li class="back" data-back="1">‹ ${esc(t)}</li>`;
     box.className='navbody cols col'+NS.col;
     box.innerHTML=
-      `<ul class="ncol ${NS.col===0?'act':''}" role="listbox" aria-label="Categoría">${NAV.map((c,i)=>li(i===NS.c?(NS.col===0?'cur':'on'):'',`data-nc="${i}" aria-selected="${i===NS.c}"`,`<span class="nn">${esc(c.name.toUpperCase())}</span><span class="na">▸</span>`)).join('')}</ul>`+
-      `<ul class="ncol ${NS.col===1?'act':''}" role="listbox" aria-label="Marca">${back(cat.name.toUpperCase())}${cat.brands.map((b,i)=>li(i===NS.b?(NS.col===1?'cur':'on'):'',`data-nb="${i}" aria-selected="${i===NS.b}"`,`<span class="nn">${esc(b.name.toUpperCase())}</span><span class="na">▸</span>`)).join('')}</ul>`+
-      `<ul class="ncol ${NS.col===2?'act':''}" role="listbox" aria-label="Modelo">${back(br.name.toUpperCase())}${br.items.map((e,i)=>li(`${e.id===S.sel?'hi sel':''} ${i===NS.m&&NS.col===2?'cur':''}`,`data-eid="${e.id}" aria-selected="${e.id===S.sel}"`,`<span class="nn">${esc(e.name)}</span><span class="ny">${esc(e.years)}</span>`)).join('')}</ul>`;
+      `<ul class="ncol ${NS.col===0?'act':''}" role="listbox" aria-label="${T('Categoría')}">${NAV.map((c,i)=>li(i===NS.c?(NS.col===0?'cur':'on'):'',`data-nc="${i}" aria-selected="${i===NS.c}"`,`<span class="nn">${esc(T(c.name).toUpperCase())}</span><span class="na">▸</span>`)).join('')}</ul>`+
+      `<ul class="ncol ${NS.col===1?'act':''}" role="listbox" aria-label="${T('Marca')}">${back(T(cat.name).toUpperCase())}${cat.brands.map((b,i)=>li(i===NS.b?(NS.col===1?'cur':'on'):'',`data-nb="${i}" aria-selected="${i===NS.b}"`,`<span class="nn">${esc(T(b.name).toUpperCase())}</span><span class="na">▸</span>`)).join('')}</ul>`+
+      `<ul class="ncol ${NS.col===2?'act':''}" role="listbox" aria-label="${T('Modelo')}">${back(T(br.name).toUpperCase())}${br.items.map((e,i)=>li(`${e.id===S.sel?'hi sel':''} ${i===NS.m&&NS.col===2?'cur':''}`,`data-eid="${e.id}" aria-selected="${e.id===S.sel}"`,`<span class="nn">${esc(T(e.name))}</span><span class="ny">${esc(T(e.years))}</span>`)).join('')}</ul>`;
   }
   const e=focusE||curEntry();NS.det=e&&e.id;
-  $('#navDet').innerHTML=e?`<span class="dn">${e.id===S.sel?'● ':''}${esc(fullName(e))}</span><span class="ds">${esc(entrySpec(e))}</span><em class="${e.official?'ok':''}" title="${e.official?'Según especificaciones del fabricante o del servicio':'Basado en lo habitual de esa plataforma: compruébalo con tu equipo o usa el Pack de prueba'}">${e.official?'VERIFICADO':'ORIENTATIVO'}</em><button class="info" data-info="cass" aria-label="Más sobre este preset">i</button>`:'';
+  $('#navDet').innerHTML=e?`<span class="dn">${e.id===S.sel?'● ':''}${esc(fullName(e))}</span><span class="ds">${esc(entrySpec(e))}</span><em class="${e.official?'ok':''}" title="${T(e.official?'Según especificaciones del fabricante o del servicio':'Basado en lo habitual de esa plataforma: compruébalo con tu equipo o usa el Pack de prueba')}">${T(e.official?'VERIFICADO':'ORIENTATIVO')}</em><button class="info" data-info="cass" aria-label="${T('Más sobre este preset')}">i</button>`:'';
   box.querySelectorAll('.cur,.hi').forEach(h=>{const ul=h.parentElement,r=h.getBoundingClientRect(),p=ul.getBoundingClientRect();if(r.top<p.top)ul.scrollTop+=r.top-p.top;else if(r.bottom>p.bottom)ul.scrollTop+=r.bottom-p.bottom});
 }
 function navMove(d){
@@ -83,11 +83,11 @@ function bindNav(){
 }
 async function sendRequest(){
   const inp=$('#reqIn'),msg=$('#reqMsg'),txt=(inp.value||'').trim();if(!txt){inp.focus();return}
-  msg.textContent='ENVIANDO…';
+  msg.textContent=T('ENVIANDO…');
   let db=null;try{db=window.claude?.use?await window.claude.use('db'):null}catch(e){}
-  if(!db){window.open('https://github.com/eduardmcv/losslessbuddy/issues/new?labels=preset&title='+encodeURIComponent('Preset: '+txt.slice(0,140)),'_blank','noopener');msg.textContent='SE HA ABIERTO GITHUB PARA ENVIAR LA PETICIÓN.';return}
-  try{await db.collection('requests').add({text:txt.slice(0,140),at:Date.now()});inp.value='';msg.textContent='ANOTADO: «'+txt.toUpperCase().slice(0,40)+'». GRACIAS.'}
-  catch(e){msg.textContent=e&&e.code==='invalid_argument'?'SOLO EL PROPIETARIO PUEDE GUARDAR PETICIONES EN ESTA VERSIÓN.':'NO SE PUDO GUARDAR. INTÉNTALO MÁS TARDE.'}
+  if(!db){window.open('https://github.com/eduardmcv/losslessbuddy/issues/new?labels=preset&title='+encodeURIComponent('Preset: '+txt.slice(0,140)),'_blank','noopener');msg.textContent=T('SE HA ABIERTO GITHUB PARA ENVIAR LA PETICIÓN.');return}
+  try{await db.collection('requests').add({text:txt.slice(0,140),at:Date.now()});inp.value='';msg.textContent=T('ANOTADO: «{q}». GRACIAS.',{q:txt.toUpperCase().slice(0,40)})}
+  catch(e){msg.textContent=T(e&&e.code==='invalid_argument'?'SOLO EL PROPIETARIO PUEDE GUARDAR PETICIONES EN ESTA VERSIÓN.':'NO SE PUDO GUARDAR. INTÉNTALO MÁS TARDE.')}
 }
 function crt(on){const n=$('#nav');n.classList.remove('crt-on','crt-off');void n.offsetWidth;n.classList.toggle('crt-dark',!on);if(!reduce)n.classList.add(on?'crt-on':'crt-off')}
 function setMode(m){

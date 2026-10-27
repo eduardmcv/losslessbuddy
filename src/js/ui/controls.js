@@ -16,7 +16,7 @@ function buildMeter(){
     ${t}
     <text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-size="7.5" letter-spacing="1.5" fill="#c9271c" transform="rotate(-27 ${lx} ${ly})">LOSSY</text>
     <text x="120" y="106" text-anchor="middle" font-size="15" fill="#2d2d2d" font-family="Barlow Condensed, sans-serif" font-weight="600">kHz</text>
-    <text x="120" y="119" text-anchor="middle" font-size="7.5" letter-spacing="2" fill="#6e6e6e" font-family="Barlow Condensed, sans-serif">CORTE DE AGUDOS</text>
+    <text x="120" y="119" text-anchor="middle" font-size="7.5" letter-spacing="2" fill="#6e6e6e" font-family="Barlow Condensed, sans-serif">${T('CORTE DE AGUDOS')}</text>
     <g id="needle"><line x1="120" y1="178" x2="120" y2="48" stroke="#d8261b" stroke-width="1.7" stroke-linecap="round"/></g>
     <circle cx="120" cy="178" r="36" fill="#232323"/><circle cx="120" cy="178" r="36" fill="none" stroke="#3e3e3e" stroke-width="1.5"/><circle cx="120" cy="178" r="24" fill="#545454"/><path d="M114 160l12 12M126 160l-12 12" stroke="#2d2d2d" stroke-width="2"/>
     <rect width="240" height="150" fill="url(#mg)"/>
@@ -63,11 +63,11 @@ function restLadder(){const a=S.an,L=a&&isFinite(a.lufs)?a.lufs:-80;ladder.l=lad
 const KN={kQ:{},kRate:{},kNorm:{}};
 function knobState(id){
   const o=S.out,f=FMT[o.fmt];
-  if(id==='kQ')return f.lossless?{opts:f.depths.map(v=>({v,l:v===32?'32F':v+''})),cur:o.bits,span:f.depths.length===2?80:130,label:'Bits'}
+  if(id==='kQ')return f.lossless?{opts:f.depths.map(v=>({v,l:v===32?'32F':v+''})),cur:o.bits,span:f.depths.length===2?80:130,label:T('Bits')}
     :{opts:KBPS.map(v=>({v,l:v+''})),cur:o.kbps,span:150,label:'kbps'};
-  if(id==='kNorm')return{opts:[{v:'off',l:'Off'},{v:-23,l:'−23'},{v:-16,l:'−16'},{v:-14,l:'−14'},{v:'peak',l:'Pico'}],cur:!o.norm?'off':o.norm==='peak'?'peak':o.lufs,span:170,label:'Normalizar'};
+  if(id==='kNorm')return{opts:[{v:'off',l:T('Off')},{v:-23,l:'−23'},{v:-16,l:'−16'},{v:-14,l:'−14'},{v:'peak',l:T('Pico')}],cur:!o.norm?'off':o.norm==='peak'?'peak':o.lufs,span:170,label:T('Normalizar')};
   const list=f.rates?(f.rates.length===1?f.rates:[0,...f.rates.filter(r=>r>=44100)]):RATES,sr=S.src?S.src.rate:0;
-  return{opts:list.map(v=>({v,l:v?(v/1000).toLocaleString('es-ES'):'Orig '+(sr?(sr/1000).toLocaleString('es-ES'):'')})),cur:o.rate,span:list.length===3?100:150,label:'Muestreo'};
+  return{opts:list.map(v=>({v,l:v?(v/1000).toLocaleString(LOC()):T('Orig')+' '+(sr?(sr/1000).toLocaleString(LOC()):'')})),cur:o.rate,span:list.length===3?100:150,label:T('Muestreo')};
 }
 function drawKnob(id){
   const el=$('#'+id),{opts,cur,span,label}=knobState(id),big=!!KN[id].big,s=big?118:76,m=big?40:34,c=s/2+m,n=opts.length;
@@ -117,7 +117,7 @@ function drawDial(){
     c.beginPath();c.moveTo(x,hh-12.5);c.lineTo(x,hh-12.5-(isM?16:7));c.lineWidth=isM?1.3:.8;c.stroke();
     if(isM)c.fillText(fmtTime(s),x,15)}
   const xe=Math.round(DPAD+span)+.5;c.beginPath();c.moveTo(xe,hh-12.5);c.lineTo(xe,hh-12.5-16);c.stroke();
-  c.fillStyle='#c9271c';c.font='600 9px "Barlow Condensed", sans-serif';c.textAlign='right';c.fillText('FIN',w-DPAD-4,hh-2);
+  c.fillStyle='#c9271c';c.font='600 9px "Barlow Condensed", sans-serif';c.textAlign='right';c.fillText(T('FIN'),w-DPAD-4,hh-2);
 }
 function placeRed(sec){
   const d=dur(),w=$('#dial').clientWidth;$('#red').style.left=(DPAD+(d?Math.min(1,sec/d):0)*(w-DPAD*2))+'px';

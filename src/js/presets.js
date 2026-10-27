@@ -100,4 +100,5 @@ const slug=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[
 const ENTRIES=DB_ROWS.map(([c,b,m,y,r,n,ok])=>({id:c+'-'+slug(b+' '+m),cat:c,brand:b,name:m,years:y,recipe:r,info:n,official:!!ok,pack:r==='pack',o:r==='pack'?{fmt:'aac',kbps:256,rate:44100}:RECIPE[r]}));
 const NAV=NAVCATS.map(([id,name])=>{const es=ENTRIES.filter(e=>e.cat===id),brands=[...new Set(es.map(e=>e.brand))];return{id,name,brands:brands.map(b=>({name:b,items:es.filter(e=>e.brand===b)}))}});
 const fold=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
-ENTRIES.forEach(e=>{e.hay=fold([NAVCATS.find(c=>c[0]===e.cat)[1],e.brand,e.name,e.years,e.recipe].join(' '))});
+// Search matches every language, so a query works whatever the UI language is.
+ENTRIES.forEach(e=>{const w=[NAVCATS.find(c=>c[0]===e.cat)[1],e.brand,e.name,e.years,e.recipe],en=typeof I18N_EN!=='undefined'?w.map(x=>I18N_EN[x]||''):[];e.hay=fold([...w,...en].join(' '))});

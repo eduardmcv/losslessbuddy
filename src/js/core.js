@@ -38,14 +38,14 @@ const INFO={
   prof:['Perfil AAC','AAC-LC es el AAC normal, el que lee todo el mundo. HE-AAC añade un truco para sonar decente a muy pocos kbps (64 o menos), pero muchos equipos antiguos no lo soportan.','Para música a 128 kbps o más: siempre LC.'],
   cont:['Contenedor','La «caja» del archivo: decide la extensión. El mismo audio puede ir en cajas distintas: PCM en .wav o .aiff (la de Apple, que además guarda etiquetas y carátula); AAC en .m4a, .m4b (audiolibros: el iPhone recuerda por dónde ibas) o .aac pelado (sin etiquetas); Opus en .opus u .ogg.','Si tu equipo no ve el archivo, prueba otra caja del mismo códec.'],
   pack:['Pack de prueba','Crea un zip con 8 versiones de 30 segundos de tu canción, numeradas: AAC fijo y variable, .m4a y .aac, HE-AAC, MP3 320 y 192, WAV y FLAC.','Cópialas a un USB o SD en FAT32, pon cada una en el coche y apunta qué números suenan. Te quedas con la de más calidad que funcione. Dentro va un LEEME.txt con la lista.'],
-  mode2:['Manual o preset','PRESET: eliges un destino (el Audi, un CDJ, Spotify…) pasando cintas con ◀ ▶, o saltando de categoría con los pilotos. Se ajusta todo solo.','MANUAL: tú eliges códec, contenedor, calidad y demás. Si vienes de una cinta, partes de sus ajustes para retocarlos.'],
+  mode2:['Manual o preset','PRESET: eliges tu equipo o destino en la pantalla (coche, portátil, Bluetooth, DJ…) o escribes para buscarlo, y se ajusta todo solo.','MANUAL: tú eliges códec, contenedor, calidad y demás, partiendo de los ajustes del preset que tenías.'],
 };
 const S={mode:'preset',sel:'car-audi-a4-b8-mmi-3g',src:null,an:null,out:{...BASE,fmt:'aac',kbps:256,rate:44100,cover:'500'},queue:[],busy:false,eng:{aac:false,mp3:false},tags:{},coverSrc:null,coverOut:null,scale:'lin',scopeOpen:true,flacRatio:.6};
 
 const fmtBytes=b=>b<1048576?(b/1024).toFixed(0)+' KB':(b/1048576).toFixed(b<10485760?2:1)+' MB';
 const fmtTime=s=>{s=Math.round(s);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
-const fmtRate=r=>(r/1000).toLocaleString('es-ES',{maximumFractionDigits:2})+' kHz';
-const num=(v,d=1)=>v.toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d}).replace('-','−');
+const fmtRate=r=>(r/1000).toLocaleString(LOC(),{maximumFractionDigits:2})+' kHz';
+const num=(v,d=1)=>v.toLocaleString(LOC(),{minimumFractionDigits:d,maximumFractionDigits:d}).replace('-','−');
 function toast(msg,err){const t=$('#toast');t.textContent=msg;t.className='toast show'+(err?' err':'');clearTimeout(t._h);t._h=setTimeout(()=>t.className='toast',3800)}
 const baseName=n=>n.replace(/\.[^.]+$/,'');
 const isLossless=f=>/^(FLAC|WAV|AIFF|ALAC)$/.test(f);

@@ -99,16 +99,6 @@ function findCutoff(db,fs,N){
   const full=cutHz>=nyq*.96||(fs<=48000&&cutHz>=21000);
   return{hz:cutHz,sharp:!full&&drop>22,full,drop};
 }
-function verdict(){
-  const a=S.an,c=a.cut,k=c.hz/1000,src=S.src,ll=isLossless(src.fmt);
-  if(c.full)return{s:'good',t:ll?'Lossless real':'Espectro completo',d:'Contenido hasta Nyquist, sin corte'};
-  if(c.sharp){
-    let g=k<11.5?'MP3 ≤ 64 kbps':k<15.4?'MP3 96–112 kbps':k<16.6?'MP3 128 kbps':k<19.3?'MP3 160–192 kbps':k<20?'MP3 V0–256 / AAC':'MP3 320 kbps';
-    if(a.fs>50000&&k<=24.5)g='upsample de 44.1/48 kHz';
-    return ll?{s:'bad',t:'Probable transcode',d:`Corte brusco a ${num(k)} kHz: patrón ${g}`}:{s:'warn',t:'Con pérdida',d:`Corte a ${num(k)} kHz: patrón ${g}`};
-  }
-  return{s:'good',t:'Sin corte brusco',d:`Agudos hasta ${num(k)} kHz con caída gradual`};
-}
 /* ---------- processing ---------- */
 function effRate(){
   const o=S.out,sr=S.src?S.src.rate:44100,f=FMT[o.fmt];let r=o.rate||sr;

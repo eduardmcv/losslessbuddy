@@ -46,7 +46,7 @@ async function encOpus(chans,rate,kbps,prog,md,srcRate){
   const ch=chans.length,len=chans[0].length;
   const cfg={codec:'opus',sampleRate:rate,numberOfChannels:ch,bitrate:kbps*1000};
   let ok=false;try{ok='AudioEncoder' in window&&(await AudioEncoder.isConfigSupported(cfg)).supported}catch(e){}
-  if(!ok)throw new Error('Este navegador no codifica Opus. Prueba con Chrome, Edge o Firefox actualizados.');
+  if(!ok)throw new Error(T('Este navegador no codifica Opus. Prueba con Chrome, Edge o Firefox actualizados.'));
   const pk=[];let err=null,pre=312;
   const enc=new AudioEncoder({output:(c,m)=>{const b=new Uint8Array(c.byteLength);c.copyTo(b);pk.push({data:b,dur:Math.round((c.duration||20000)*rate/1e6)});
     const d=m&&m.decoderConfig&&m.decoderConfig.description;if(d&&!pk.head){const u=d instanceof ArrayBuffer?new Uint8Array(d):new Uint8Array(d.buffer,d.byteOffset,d.byteLength);if(u.length>=12&&String.fromCharCode(...u.subarray(0,8))==='OpusHead')pre=u[10]|(u[11]<<8);pk.head=1}},error:e=>err=e});

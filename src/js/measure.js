@@ -95,19 +95,19 @@ function fakeSignals(sp,fs,src){
 }
 function judge(g,src,fs){
   const k=g.cut.hz/1000,ll=isLossless(src.fmt),sigs=[
-    {ok:!g.cut.full,label:g.cut.full?'Contenido hasta Nyquist ('+num(fs/2000)+' kHz)':'Corte de agudos a '+num(k)+' kHz'},
-    {ok:g.wall,label:g.wall?`Corte en pared: cae ${Math.round(g.drop)} dB en 0,5 kHz`:'Sin caída en pared'},
-    {ok:g.constant,label:g.segN>=3?(g.constant?'El corte es constante en toda la pista':'El corte varía con la música'):'No hay tramos suficientes para medir constancia'},
-    {ok:g.holesSig,label:g.holesSig?`Huecos en bandas altas (${Math.round(g.holes*100)} %)`:'Sin huecos en bandas altas'}];
-  if(fs>50000)sigs.push({ok:g.hires,label:g.hires?'Nada por encima de 24 kHz en un archivo hi-res':'Contenido real por encima de 24 kHz'});
-  if(src.bits===24)sigs.push({ok:g.fake24,label:g.fake24?'Los 8 bits bajos están vacíos: origen 16 bit':'Usa los 24 bits'});
-  if(!ll)return{s:'warn',t:'Con pérdida',d:`${src.fmt} · corte a ${num(k)} kHz`,sigs,conf:null};
-  if(g.cut.full)return g.fake24?{s:'doubt',t:'24 bit falso',d:'Es un 16 bit rellenado con ceros',sigs,conf:'alta'}:{s:'good',t:'Lossless real',d:'Contenido hasta Nyquist, sin corte',sigs,conf:null};
-  if(g.hires&&g.wall)return{s:'doubt',t:'Hi-res falso',d:'Upsample de 44,1/48 kHz: no es MP3, pero tampoco hi-res',sigs,conf:'alta'};
+    {ok:!g.cut.full,label:g.cut.full?T('Contenido hasta Nyquist ({k} kHz)',{k:num(fs/2000)}):T('Corte de agudos a {k} kHz',{k:num(k)})},
+    {ok:g.wall,label:g.wall?T('Corte en pared: cae {db} dB en {w} kHz',{db:Math.round(g.drop),w:num(.5)}):T('Sin caída en pared')},
+    {ok:g.constant,label:T(g.segN>=3?(g.constant?'El corte es constante en toda la pista':'El corte varía con la música'):'No hay tramos suficientes para medir constancia')},
+    {ok:g.holesSig,label:g.holesSig?T('Huecos en bandas altas ({p} %)',{p:Math.round(g.holes*100)}):T('Sin huecos en bandas altas')}];
+  if(fs>50000)sigs.push({ok:g.hires,label:T(g.hires?'Nada por encima de 24 kHz en un archivo hi-res':'Contenido real por encima de 24 kHz')});
+  if(src.bits===24)sigs.push({ok:g.fake24,label:T(g.fake24?'Los 8 bits bajos están vacíos: origen 16 bit':'Usa los 24 bits')});
+  if(!ll)return{s:'warn',t:T('Con pérdida'),d:T('{fmt} · corte a {k} kHz',{fmt:src.fmt,k:num(k)}),sigs,conf:null};
+  if(g.cut.full)return g.fake24?{s:'doubt',id:'fake24',t:T('24 bit falso'),d:T('Es un 16 bit rellenado con ceros'),sigs,conf:'alta'}:{s:'good',t:T('Lossless real'),d:T('Contenido hasta Nyquist, sin corte'),sigs,conf:null};
+  if(g.hires&&g.wall)return{s:'doubt',id:'hires',t:T('Hi-res falso'),d:T('Upsample de 44,1/48 kHz: no es MP3, pero tampoco hi-res'),sigs,conf:'alta'};
   if(g.wall&&(g.constant||g.holesSig)){const sc=(g.wallStrong?2:1)+(g.constant?1:0)+(g.holesSig?1:0);
-    return{s:'bad',t:'Fake',d:`Hecho desde ${g.est}`,sigs,conf:sc>=3?'alta':sc===2?'media':'baja',est:g.est}}
-  if(k<19.5)return{s:'doubt',t:'Sospechoso',d:`Corte a ${num(k)} kHz ${g.wall?'pero variable':'con caída suave'}: puede ser analógico o un máster antiguo`,sigs,conf:'baja'};
-  return{s:'good',t:'Lossless real',d:`Agudos hasta ${num(k)} kHz sin firma de códec`,sigs,conf:null};
+    return{s:'bad',t:'Fake',d:T('Hecho desde {est}',{est:g.est}),sigs,conf:sc>=3?'alta':sc===2?'media':'baja',est:g.est}}
+  if(k<19.5)return{s:'doubt',t:T('Sospechoso'),d:T(g.wall?'Corte a {k} kHz pero variable: puede ser analógico o un máster antiguo':'Corte a {k} kHz con caída suave: puede ser analógico o un máster antiguo',{k:num(k)}),sigs,conf:'baja'};
+  return{s:'good',t:T('Lossless real'),d:T('Agudos hasta {k} kHz sin firma de códec',{k:num(k)}),sigs,conf:null};
 }
 async function analyzeAll(chans,fs,src){
   const sp=await spectrum(chans,fs);sp.chans0=chans[0];

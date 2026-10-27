@@ -18,6 +18,10 @@ header{display:flex;align-items:center;justify-content:space-between;gap:16px;fl
 .brand .model{display:flex;align-items:center;gap:8px;font-family:var(--f-silk);font-weight:600;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--mute)}
 .brand .model em{font-style:normal;letter-spacing:.12em;padding:2px 7px;border:1.5px solid currentColor;border-radius:3px}
 .hright{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.langsw{display:flex;gap:2px;padding:2px;border-radius:8px;background:var(--seam);box-shadow:inset 0 1px 2px rgba(0,0,0,.5)}
+.langsw button{appearance:none;border:0;border-radius:6px;padding:4px 9px;font-family:var(--f-silk);font-weight:600;font-size:11px;letter-spacing:.14em;cursor:pointer;color:var(--mute);background:transparent}
+.langsw button[aria-pressed="true"]{color:var(--strong);background:linear-gradient(180deg,var(--k-hi),var(--k-lo));box-shadow:inset 0 1px 0 var(--k-glint),0 1px 2px var(--k-shadow)}
+.langsw button[aria-pressed="true"]::before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;margin-right:6px;vertical-align:1px;background:var(--accent);box-shadow:0 0 6px var(--accent-glow)}
 .engines{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
 .eng{display:flex;align-items:center;gap:7px;font-family:var(--f-silk);font-size:12px;letter-spacing:.14em;color:var(--mute)}
 
