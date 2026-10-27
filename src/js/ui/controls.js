@@ -4,21 +4,21 @@ const mPt=(r,v)=>{const a=(-M.ang+2*M.ang*(v-M.min)/(M.max-M.min))*Math.PI/180;r
 const mArc=(r,v0,v1)=>{const[a,b]=mPt(r,v0),[c,d]=mPt(r,v1);return`M${a} ${b}A${r} ${r} 0 0 1 ${c} ${d}`};
 function buildMeter(){
   let t='';
-  for(let v=10;v<=22.001;v+=.5){const maj=Math.abs(v%2)<.01,[x1,y1]=mPt(112,v),[x2,y2]=mPt(maj?124:118,v);t+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#2b2d31" stroke-width="${maj?1.4:.8}"/>`;
-    if(maj){const[lx,ly]=mPt(134,v);t+=`<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="${v<19?'#c9271c':'#2b2d31'}">${v}</text>`}}
+  for(let v=10;v<=22.001;v+=.5){const maj=Math.abs(v%2)<.01,[x1,y1]=mPt(112,v),[x2,y2]=mPt(maj?124:118,v);t+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#2d2d2d" stroke-width="${maj?1.4:.8}"/>`;
+    if(maj){const[lx,ly]=mPt(134,v);t+=`<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="${v<19?'#c9271c':'#2d2d2d'}">${v}</text>`}}
   const[lx,ly]=mPt(93,12.8);
   $('#meterSvg').innerHTML=`<defs>
-    <radialGradient id="mf" cx="50%" cy="15%" r="95%"><stop offset="0" stop-color="#f7f6f2"/><stop offset="1" stop-color="#d8d6ce"/></radialGradient>
-    <linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
+    <radialGradient id="mf" cx="50%" cy="15%" r="95%"><stop offset="0" stop-color="#f7f6f2"/><stop offset="1" stop-color="#d6d6d6"/></radialGradient>
+    <linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".45"/><stop offset=".45" stop-color="#ffffff" stop-opacity="0"/></linearGradient></defs>
     <rect width="240" height="150" fill="url(#mf)"/>
     <path d="${mArc(106,10,19)}" stroke="#d8261b" stroke-width="6" fill="none" opacity=".85"/>
-    <path d="${mArc(112,10,22)}" stroke="#2b2d31" stroke-width="1.2" fill="none"/>
+    <path d="${mArc(112,10,22)}" stroke="#2d2d2d" stroke-width="1.2" fill="none"/>
     ${t}
     <text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-size="7.5" letter-spacing="1.5" fill="#c9271c" transform="rotate(-27 ${lx} ${ly})">LOSSY</text>
-    <text x="120" y="106" text-anchor="middle" font-size="15" fill="#2b2d31" font-family="Barlow Condensed, sans-serif" font-weight="600">kHz</text>
-    <text x="120" y="119" text-anchor="middle" font-size="7.5" letter-spacing="2" fill="#6b6e74" font-family="Barlow Condensed, sans-serif">CORTE DE AGUDOS</text>
+    <text x="120" y="106" text-anchor="middle" font-size="15" fill="#2d2d2d" font-family="Barlow Condensed, sans-serif" font-weight="600">kHz</text>
+    <text x="120" y="119" text-anchor="middle" font-size="7.5" letter-spacing="2" fill="#6e6e6e" font-family="Barlow Condensed, sans-serif">CORTE DE AGUDOS</text>
     <g id="needle"><line x1="120" y1="178" x2="120" y2="48" stroke="#d8261b" stroke-width="1.7" stroke-linecap="round"/></g>
-    <circle cx="120" cy="178" r="36" fill="#202328"/><circle cx="120" cy="178" r="36" fill="none" stroke="#3a3e45" stroke-width="1.5"/><circle cx="120" cy="178" r="24" fill="#4f555d"/><path d="M114 160l12 12M126 160l-12 12" stroke="#2a2d32" stroke-width="2"/>
+    <circle cx="120" cy="178" r="36" fill="#232323"/><circle cx="120" cy="178" r="36" fill="none" stroke="#3e3e3e" stroke-width="1.5"/><circle cx="120" cy="178" r="24" fill="#545454"/><path d="M114 160l12 12M126 160l-12 12" stroke="#2d2d2d" stroke-width="2"/>
     <rect width="240" height="150" fill="url(#mg)"/>
     <rect x="1.5" y="1.5" width="237" height="147" rx="5" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="3"/>`;
 }
@@ -111,7 +111,7 @@ function drawDial(){
   const d=dur();if(!d)return;
   const span=w-DPAD*2,steps=[1,2,5,10,15,30,60,120,300,600];let maj=steps.find(s=>d/s<=span/64)||900;
   const minor=maj/(maj%3===0&&maj>=15?6:5);
-  c.strokeStyle='#2b2d31';c.fillStyle='#2b2d31';c.textAlign='center';c.font='600 11px "Barlow Condensed", sans-serif';
+  c.strokeStyle='#2d2d2d';c.fillStyle='#2d2d2d';c.textAlign='center';c.font='600 11px "Barlow Condensed", sans-serif';
   c.lineWidth=1;c.beginPath();c.moveTo(DPAD,hh-12.5);c.lineTo(w-DPAD,hh-12.5);c.stroke();
   for(let s=0;s<=d+1e-6;s+=minor){const x=Math.round(DPAD+s/d*span)+.5,isM=Math.abs(s/maj-Math.round(s/maj))<1e-6;
     c.beginPath();c.moveTo(x,hh-12.5);c.lineTo(x,hh-12.5-(isM?16:7));c.lineWidth=isM?1.3:.8;c.stroke();

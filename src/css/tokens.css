@@ -1,36 +1,17 @@
-/* Design tokens: dark is the default skin, light applies via OS preference,
-   [data-theme] (host) or [data-skin] (user toggle, persisted). */
+/* Design tokens: a single neutral graphite skin (no blue cast). */
 :root{
-  --desk-1:#272b32;--desk-2:#1b1e23;--plate-hi:#363c45;--plate:#2b3038;--plate-lo:#22262c;--plate-glint:rgba(255,255,255,.09);--plate-edge:rgba(0,0,0,.4);--drop:rgba(0,0,0,.55);
-  --screw-hi:#8d949e;--screw-lo:#3b4048;--screw-slot:#22252a;--groove:#15171b;--groove-hi:rgba(255,255,255,.06);
-  --silk:#c9d0da;--mute:#7f8894;--dim:#5d6571;--strong:#eef2f6;--warn-ink:#ffb340;--ring:#22262c;--ring-hi:rgba(255,255,255,.06);--led-ring:#191b1f;--ind-off:#3a3f47;
-  --k-hi:#434951;--k-lo:#30353c;--k-on-hi:#2a2e34;--k-on-lo:#343940;--k-side:#24282d;--k-edge:#15171b;--k-glint:rgba(255,255,255,.12);--k-shadow:rgba(0,0,0,.55);--k-text:#d7dce3;
-  --dish-1:#24282e;--dish-2:#3e444c;--dish-shadow:rgba(0,0,0,.55);--dish-rim:rgba(255,255,255,.08);--seam:#131518;
-  --kwell:#15171a;--kwell-shadow:#000;--engr:#1c1f24;--recess:#1b1e23;--well-deep:#24282e;--hole:#0d0e10;color-scheme:dark;
+  --desk-1:#2b2b2b;--desk-2:#1e1e1e;--plate-hi:#3b3b3b;--plate:#303030;--plate-lo:#262626;--plate-glint:rgba(255,255,255,.09);--plate-edge:rgba(0,0,0,.4);--drop:rgba(0,0,0,.55);
+  --screw-hi:#939393;--screw-lo:#404040;--screw-slot:#252525;--groove:#171717;--groove-hi:rgba(255,255,255,.06);
+  --silk:#cfcfcf;--mute:#878787;--dim:#646464;--strong:#f1f1f1;--warn-ink:#ffb340;--ring:#262626;--ring-hi:rgba(255,255,255,.06);--led-ring:#1b1b1b;--ind-off:#3f3f3f;
+  --k-hi:#484848;--k-lo:#343434;--k-on-hi:#2e2e2e;--k-on-lo:#383838;--k-side:#282828;--k-edge:#171717;--k-glint:rgba(255,255,255,.12);--k-shadow:rgba(0,0,0,.55);--k-text:#dbdbdb;
+  --dish-1:#282828;--dish-2:#434343;--dish-shadow:rgba(0,0,0,.55);--dish-rim:rgba(255,255,255,.08);--seam:#151515;
+  --kwell:#171717;--kwell-shadow:#000000;--engr:#1f1f1f;--recess:#1e1e1e;--well-deep:#282828;--hole:#0e0e0e;color-scheme:dark;
   --red:#ff3b30; --red-glow:rgba(255,59,48,.55); --green:#36e07a; --green-glow:rgba(54,224,122,.5); --amber:#ffb340; --amber-glow:rgba(255,179,64,.5);
   --accent:#ff6a1a; --accent-glow:rgba(255,106,26,.55);
-  --win:#0d0e10;
+  --win:#0e0e0e;
   --lcd-1:#b4c2a0; --lcd-2:#98a886; --lcd-ink:#18210f; --lcd-ghost:rgba(24,33,15,.16);
   --f-ui:"Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
   --f-silk:"Barlow Condensed", "Arial Narrow", sans-serif;
   --f-lcd:"Jersey 10", "Share Tech Mono", ui-monospace, monospace;
   --f-mono:"Share Tech Mono", ui-monospace, Menlo, Consolas, monospace;
 }
-@media (prefers-color-scheme: light){:root:not([data-theme="dark"]):not([data-skin]){--desk-1:#f1f2f4;--desk-2:#cfd3d8;--plate-hi:#fafafb;--plate:#e9eaec;--plate-lo:#d9dbde;--plate-glint:#fff;--plate-edge:rgba(0,0,0,.12);--drop:rgba(40,45,55,.25);
-  --screw-hi:#ffffff;--screw-lo:#a9aeb5;--screw-slot:#8c9198;--groove:#c4c7cc;--groove-hi:rgba(255,255,255,.9);
-  --silk:#33373d;--mute:#737981;--dim:#959ba3;--strong:#17191c;--warn-ink:#b0560c;--ring:#c7cacf;--ring-hi:rgba(255,255,255,.9);--led-ring:#b8bcc2;--ind-off:#c3c7cc;
-  --k-hi:#fbfbfc;--k-lo:#e3e5e8;--k-on-hi:#d9dce0;--k-on-lo:#e5e7ea;--k-side:#c9ccd1;--k-edge:#bcc0c6;--k-glint:#ffffff;--k-shadow:rgba(40,45,55,.25);--k-text:#3b3f46;
-  --dish-1:#d0d3d8;--dish-2:#f6f7f8;--dish-shadow:rgba(40,45,55,.22);--dish-rim:rgba(255,255,255,.95);--seam:#aeb2b8;
-  --kwell:#cdd0d4;--kwell-shadow:rgba(40,45,55,.45);--engr:#b9bdc3;--recess:#d6d9dc;--well-deep:#dcdee2;--hole:#8f949b;color-scheme:light;}}
-:root[data-theme="light"]:not([data-skin]){--desk-1:#f1f2f4;--desk-2:#cfd3d8;--plate-hi:#fafafb;--plate:#e9eaec;--plate-lo:#d9dbde;--plate-glint:#fff;--plate-edge:rgba(0,0,0,.12);--drop:rgba(40,45,55,.25);
-  --screw-hi:#ffffff;--screw-lo:#a9aeb5;--screw-slot:#8c9198;--groove:#c4c7cc;--groove-hi:rgba(255,255,255,.9);
-  --silk:#33373d;--mute:#737981;--dim:#959ba3;--strong:#17191c;--warn-ink:#b0560c;--ring:#c7cacf;--ring-hi:rgba(255,255,255,.9);--led-ring:#b8bcc2;--ind-off:#c3c7cc;
-  --k-hi:#fbfbfc;--k-lo:#e3e5e8;--k-on-hi:#d9dce0;--k-on-lo:#e5e7ea;--k-side:#c9ccd1;--k-edge:#bcc0c6;--k-glint:#ffffff;--k-shadow:rgba(40,45,55,.25);--k-text:#3b3f46;
-  --dish-1:#d0d3d8;--dish-2:#f6f7f8;--dish-shadow:rgba(40,45,55,.22);--dish-rim:rgba(255,255,255,.95);--seam:#aeb2b8;
-  --kwell:#cdd0d4;--kwell-shadow:rgba(40,45,55,.45);--engr:#b9bdc3;--recess:#d6d9dc;--well-deep:#dcdee2;--hole:#8f949b;color-scheme:light;}
-:root[data-skin="light"]{--desk-1:#f1f2f4;--desk-2:#cfd3d8;--plate-hi:#fafafb;--plate:#e9eaec;--plate-lo:#d9dbde;--plate-glint:#fff;--plate-edge:rgba(0,0,0,.12);--drop:rgba(40,45,55,.25);
-  --screw-hi:#ffffff;--screw-lo:#a9aeb5;--screw-slot:#8c9198;--groove:#c4c7cc;--groove-hi:rgba(255,255,255,.9);
-  --silk:#33373d;--mute:#737981;--dim:#959ba3;--strong:#17191c;--warn-ink:#b0560c;--ring:#c7cacf;--ring-hi:rgba(255,255,255,.9);--led-ring:#b8bcc2;--ind-off:#c3c7cc;
-  --k-hi:#fbfbfc;--k-lo:#e3e5e8;--k-on-hi:#d9dce0;--k-on-lo:#e5e7ea;--k-side:#c9ccd1;--k-edge:#bcc0c6;--k-glint:#ffffff;--k-shadow:rgba(40,45,55,.25);--k-text:#3b3f46;
-  --dish-1:#d0d3d8;--dish-2:#f6f7f8;--dish-shadow:rgba(40,45,55,.22);--dish-rim:rgba(255,255,255,.95);--seam:#aeb2b8;
-  --kwell:#cdd0d4;--kwell-shadow:rgba(40,45,55,.45);--engr:#b9bdc3;--recess:#d6d9dc;--well-deep:#dcdee2;--hole:#8f949b;color-scheme:light;}

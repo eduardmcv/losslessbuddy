@@ -3,7 +3,7 @@ let popBtn=null;
 function openInfo(btn){
   const pop=$('#pop');if(popBtn===btn){closeInfo();return}closeInfo();
   const k=btn.dataset.info,[t,...ps]=k==='cass'?(x=>[fullName(x),x.info+(x.official?'':' (Orientativo: compruébalo con tu equipo o usa el Pack de prueba.)')])(ENTRIES.find(y=>y.id===NS.det)||curEntry()):INFO[k];
-  pop.innerHTML=`<b>${t}</b>`+ps.map(p=>`<p>${p}</p>`).join('')+(k==='meter'&&S.an?`<p style="color:#eef2f6">${S.an.v.t}${S.an.v.conf?' · confianza '+S.an.v.conf:''}</p>`+S.an.v.sigs.map(s=>`<p style="color:${s.ok?'#ffb35c':'#aab3be'}">${s.ok?'●':'○'} ${s.label}</p>`).join('')+(S.an.v.est?`<p>Origen estimado: ${S.an.v.est}</p>`:''):'');
+  pop.innerHTML=`<b>${t}</b>`+ps.map(p=>`<p>${p}</p>`).join('')+(k==='meter'&&S.an?`<p style="color:#f1f1f1">${S.an.v.t}${S.an.v.conf?' · confianza '+S.an.v.conf:''}</p>`+S.an.v.sigs.map(s=>`<p style="color:${s.ok?'#ffb35c':'#b2b2b2'}">${s.ok?'●':'○'} ${s.label}</p>`).join('')+(S.an.v.est?`<p>Origen estimado: ${S.an.v.est}</p>`:''):'');
   pop.hidden=false;btn.setAttribute('aria-expanded','true');popBtn=btn;
   const r=btn.getBoundingClientRect(),w=pop.offsetWidth,h=pop.offsetHeight;
   let x=Math.min(innerWidth-w-16,Math.max(16,r.left+r.width/2-w/2)),y=r.bottom+10;if(y+h>innerHeight-12)y=Math.max(12,r.top-h-10);
@@ -295,14 +295,6 @@ addEventListener('dragleave',e=>{if(!hasFiles(e))return;if(--dragN<=0){dragN=0;d
 addEventListener('dragover',e=>e.preventDefault());
 addEventListener('drop',e=>{e.preventDefault();dragN=0;document.body.classList.remove('dragging');const f=e.dataTransfer&&e.dataTransfer.files[0];if(!f)return;if(/^image\//.test(f.type))loadCover(f);else loadFile(f)});
 
-/* ---------- light / dark ---------- */
-function effDark(){const r=document.documentElement,s=r.dataset.skin;if(s)return s==='dark';const th=r.getAttribute('data-theme');if(th==='dark'||th==='light')return th==='dark';return matchMedia('(prefers-color-scheme: dark)').matches}
-function syncTheme(){$('#themeBtn').setAttribute('aria-checked',effDark())}
-$('#themeBtn').addEventListener('click',()=>{const n=effDark()?'light':'dark';document.documentElement.dataset.skin=n;try{localStorage.setItem('lb-skin',n)}catch(e){}syncTheme()});
-try{const s=localStorage.getItem('lb-skin');if(s==='light'||s==='dark')document.documentElement.dataset.skin=s}catch(e){}
-syncTheme();try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',syncTheme)}catch(e){}
-new MutationObserver(syncTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
-
 async function previewBytes(){
   const el=$('#previewData');if(!el)return null;const b=el.textContent.trim();
   if(b){const s=atob(b),u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u}
@@ -329,7 +321,7 @@ async function previewBytes(){
   if(pv){await loadFile(new File([pv],'BerryDeep - Fire And Water.flac'));if(S.src){S.src.demo=true;renderAll()}return}
   try{const cv=document.createElement('canvas');cv.width=cv.height=1400;const x=cv.getContext('2d'),g=x.createLinearGradient(0,0,1400,1400);g.addColorStop(0,'#ff7a45');g.addColorStop(.55,'#c8432f');g.addColorStop(1,'#2b1a4a');x.fillStyle=g;x.fillRect(0,0,1400,1400);
     x.strokeStyle='rgba(255,255,255,.85)';x.lineWidth=18;for(let i=0;i<9;i++){x.beginPath();x.arc(700,700,90+i*60,0,7);x.globalAlpha=1-i*.1;x.stroke()}x.globalAlpha=1;
-    x.fillStyle='#fff';x.font='bold 120px sans-serif';x.textAlign='center';x.fillText('LOSSLESS',700,1230);
+    x.fillStyle='#ffffff';x.font='bold 120px sans-serif';x.textAlign='center';x.fillText('LOSSLESS',700,1230);
     const b=await new Promise(r=>cv.toBlob(r,'image/png'));await setCoverSrc(await coverDims({data:new Uint8Array(await b.arrayBuffer()),mime:'image/png'}))}catch(e){}
   await runAnalysis();
 })();
