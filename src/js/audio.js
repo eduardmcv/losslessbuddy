@@ -107,9 +107,21 @@ function effRate(){
   if(f.rates&&!f.rates.includes(r)){const fam=r%11025===0?44100:48000;r=f.rates.includes(fam)?fam:f.rates.reduce((a,b)=>Math.abs(b-r)<Math.abs(a-r)?b:a)}
   return r;
 }
+/* Resampling. AudioBufferSourceNode interpolates linearly in Chromium, which folds
+   images back under Nyquist and fills the empty band above a lossy cutoff (a
+   FLAC made from an MP3 would then read as real lossless). Re-decoding the
+   original bytes at the target rate uses the decoder's windowed-sinc resampler. */
+async function srcAt(rate){
+  const s=S.src;if(!s)return null;if(s.buffer.sampleRate===rate)return s.buffer;
+  s.byRate=s.byRate||{};
+  if(!s.byRate[rate]&&s.raw){try{s.byRate[rate]=await new OfflineAudioContext(1,1,rate).decodeAudioData(s.raw.slice(0))}catch(e){}}
+  return s.byRate[rate]||null;
+}
 async function processAudio(buf,o,rate){
   let b=buf;
-  if(rate!==buf.sampleRate){const oc=new OfflineAudioContext(buf.numberOfChannels,Math.ceil(buf.length*rate/buf.sampleRate),rate);const s=oc.createBufferSource();s.buffer=buf;s.connect(oc.destination);s.start();b=await oc.startRendering()}
+  const hq=rate!==buf.sampleRate&&S.src&&buf===S.src.buffer?await srcAt(rate):null;
+  if(hq)b=hq;
+  else if(rate!==buf.sampleRate){const oc=new OfflineAudioContext(buf.numberOfChannels,Math.ceil(buf.length*rate/buf.sampleRate),rate);const s=oc.createBufferSource();s.buffer=buf;s.connect(oc.destination);s.start();b=await oc.startRendering()}
   let chans=[];for(let c=0;c<Math.min(2,b.numberOfChannels);c++)chans.push(b.getChannelData(c).slice());
   if(o.mono&&chans.length>1){const m=new Float32Array(chans[0].length);for(let i=0;i<m.length;i++)m[i]=(chans[0][i]+chans[1][i])*.5;chans=[m]}
   let note='';

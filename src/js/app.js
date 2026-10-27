@@ -43,7 +43,7 @@ async function loadFile(file){
   const ab=await file.arrayBuffer(),info=sniff(new Uint8Array(ab),file.name);let buf;
   try{const ctx=new OfflineAudioContext(1,1,info.rate&&info.rate>=8000&&info.rate<=384000?info.rate:44100);buf=await ctx.decodeAudioData(ab.slice(0))}
   catch(e){toast(`Tu navegador no sabe leer ${info.fmt}. Prueba en Chrome o Safari.`,true);return}
-  S.src={name:file.name,size:file.size,fmt:info.fmt,bits:info.bits,float:info.float,rate:buf.sampleRate,ch:buf.numberOfChannels,dur:buf.duration,buffer:buf,demo:false};
+  S.src={name:file.name,size:file.size,fmt:info.fmt,bits:info.bits,float:info.float,rate:buf.sampleRate,ch:buf.numberOfChannels,dur:buf.duration,buffer:buf,raw:ab,demo:false};
   const md=readMeta(new Uint8Array(ab),info.fmt,file.name);S.tags=md.tags;renderTagForm();await setCoverSrc(md.cover?await coverDims(md.cover):null);
   S.an=null;setNeedleKhz(null);resetDial();renderAll();await runAnalysis();
 }
@@ -142,7 +142,7 @@ const PACK=[
 ];
 async function makePack(){
   if(S.busy||!S.src)return;
-  const src=S.src.buffer,sr=src.sampleRate,L=Math.min(src.length,30*sr),st=Math.max(0,Math.min(S.pos>0?Math.floor(S.pos*sr):Math.floor(src.length*.25),src.length-L));
+  const src=await srcAt(44100)||S.src.buffer,sr=src.sampleRate,L=Math.min(src.length,30*sr),st=Math.max(0,Math.min(S.pos>0?Math.floor(S.pos*sr):Math.floor(src.length*.25),src.length-L));
   const clip=new AudioBuffer({length:L,numberOfChannels:src.numberOfChannels,sampleRate:sr});
   for(let c=0;c<src.numberOfChannels;c++)clip.copyToChannel(src.getChannelData(c).subarray(st,st+L),c);
   const list=PACK.filter(v=>!v.need||S.eng[v.need]);

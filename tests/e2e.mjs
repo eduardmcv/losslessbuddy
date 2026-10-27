@@ -43,6 +43,15 @@ const an = await page.evaluate(() => ({ name: S.src.name, verdict: S.an.v.s, lab
 ok(['good', 'warn', 'doubt', 'bad'].includes(an.verdict), `${an.name}: verdict "${an.label}" (cutoff ${an.full ? 'none' : (an.cutoff / 1000).toFixed(1) + ' kHz'})`);
 ok(isFinite(an.lufs) && an.lufs < 0 && an.lufs > -40, `integrated loudness measured (${an.lufs.toFixed(1)} LUFS)`);
 ok(!!an.tags.title, `tags read from the preview file (${an.tags.artist} – ${an.tags.title})`);
+// Regression: resampling must not fill the empty band above a lossy cutoff
+// (linear interpolation used to turn MP3-sourced FLACs into "real lossless").
+const resampled = await page.evaluate(async () => {
+  const o = { ...BASE, fmt: 'flac', bits: 16, rate: 48000 };
+  const { chans } = await processAudio(S.src.buffer, o, 48000);
+  const r = await analyzeAll(chans, 48000, { ...S.src, fmt: 'FLAC', rate: 48000 });
+  return { verdict: r.v.s, label: r.v.t };
+});
+ok(an.verdict !== 'good' ? resampled.verdict !== 'good' : true, `verdict survives 44.1 → 48 kHz resampling ("${resampled.label}")`);
 const fname = await page.evaluate(() => outBase());
 ok(fname === `${an.tags.artist} - ${an.tags.title}`, `output files named after the tags ("${fname}")`);
 
