@@ -8,7 +8,7 @@ button{font:inherit;color:inherit}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* header */
-header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-inline:4px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-inline:4px;margin-bottom:16px}
 .brand{display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-width:0}
 .brand b{font-family:"Righteous",var(--f-silk);font-weight:400;font-size:30px;line-height:1;letter-spacing:.02em;text-transform:uppercase;color:var(--strong)}
 /* 70s/80s hi-fi sunset stripes: warm only, so it reads as retro trim rather than a rainbow flag */
