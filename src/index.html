@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Conversor y analizador de audio en el navegador: detecta falsos lossless, mide loudness y convierte a FLAC, ALAC, AAC, MP3, Opus, WAV y AIFF con presets por dispositivo.">
+<title>Lossless Buddy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600&family=Jersey+10&family=Special+Elite&family=Share+Tech+Mono&display=swap">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand"><b>Lossless Buddy</b><span>LB series</span></div>
+    <div class="hright">
+      <div class="engines" id="engines" aria-label="Codificadores disponibles"></div>
+      <button class="theme" id="themeBtn" role="switch" aria-checked="true" aria-label="Modo oscuro">CLARO<span class="sw"><i></i></span>OSCURO</button>
+    </div>
+  </header>
+
+  <!-- ============ LB-1 · ANALIZADOR ============ -->
+  <section class="plate unit" aria-label="Analizador">
+    <i class="screw tl"></i><i class="screw tr"></i><i class="screw bl"></i><i class="screw br"></i>
+    <span class="unitname">LB-1 · Analizador</span>
+
+    <input type="file" id="fileIn" accept="audio/*,.flac,.wav,.mp3,.m4a,.aac,.ogg,.opus,.aif,.aiff" hidden>
+
+    <div class="top">
+      <div class="cell c-meter">
+        <div class="win meter"><svg id="meterSvg" viewBox="0 0 240 150" role="img" aria-label="Medidor de corte de agudos"></svg></div>
+        <div class="lamps strip">
+          <span class="lamp" id="lpReal"><i class="led sm green"></i>REAL</span>
+          <span class="lamp" id="lpLossy"><i class="led sm amber"></i>LOSSY</span>
+          <span class="lamp" id="lpDoubt"><i class="led sm yellow"></i>DUDA</span>
+          <span class="lamp" id="lpFake"><i class="led sm red"></i>FAKE</span>
+          <span class="sctl"><button class="info" data-info="meter" aria-label="Por qué este veredicto">i</button></span>
+        </div>
+      </div>
+      <div class="cell c-scope">
+        <div class="win screen" id="screen" aria-label="Espectrograma: pulsa para mover la línea roja"><canvas id="spec"></canvas><div class="axis" id="faxis"></div><div class="cutline" id="cutline" hidden><span id="cutLbl"></span></div><div class="playhead" id="playhead"></div></div>
+        <div class="scopebar strip"><span class="silk">Espectrograma</span><span class="sctl"><button class="txsw" id="scaleSw" role="switch" aria-checked="false" aria-label="Escala logarítmica"><span class="l">LIN</span><span class="r">LOG</span><i></i></button><button class="info" data-info="scope" aria-label="Cómo leer el espectrograma">i</button></span></div>
+      </div>
+      <div class="cell c-lufs">
+        <div class="win ladder" id="ladder" data-order="txt" data-al="s">
+          <div class="lcol" id="lcolL"></div><div class="lcol" id="lcolR"></div>
+          <div class="lscale"></div>
+          <div class="lread">
+            <span>LUFS</span><b class="big" id="lval">—</b>
+            <span>TP</span><b id="tpVal">—</b>
+            <span>DR</span><b id="drVal">—</b>
+            <span>LRA</span><b id="lraVal">—</b>
+          </div>
+        </div>
+        <div class="cap strip"><i class="led sm red" id="tpLed" title="True peak por encima de −1 dBTP"></i><span class="silk">LUFS</span><span class="sctl"><button class="info" data-info="lufs" aria-label="Qué miden estos números">i</button></span></div>
+      </div>
+    </div>
+
+    <div class="tuner">
+      <div class="dialbox">
+      <div class="display" id="display" data-v="e" aria-live="polite" title="Pulsa o arrastra un archivo para abrirlo. Se procesa en tu navegador, no se sube a ningún sitio.">
+        <div class="dcol"><div class="dl big" id="d1">—</div><div class="dl dim" id="d2"></div><div class="dl" id="dq"></div></div>
+        <button class="dopen" id="loadBtn" aria-label="Abrir archivo"><svg class="px" viewBox="0 0 11 11" aria-hidden="true"><rect x="5" y="0" width="1" height="1"/><rect x="4" y="1" width="1" height="1"/><rect x="5" y="1" width="1" height="1"/><rect x="6" y="1" width="1" height="1"/><rect x="3" y="2" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/><rect x="5" y="2" width="1" height="1"/><rect x="6" y="2" width="1" height="1"/><rect x="7" y="2" width="1" height="1"/><rect x="2" y="3" width="1" height="1"/><rect x="3" y="3" width="1" height="1"/><rect x="4" y="3" width="1" height="1"/><rect x="5" y="3" width="1" height="1"/><rect x="6" y="3" width="1" height="1"/><rect x="7" y="3" width="1" height="1"/><rect x="8" y="3" width="1" height="1"/><rect x="4" y="4" width="1" height="1"/><rect x="5" y="4" width="1" height="1"/><rect x="6" y="4" width="1" height="1"/><rect x="4" y="5" width="1" height="1"/><rect x="5" y="5" width="1" height="1"/><rect x="6" y="5" width="1" height="1"/><rect x="4" y="6" width="1" height="1"/><rect x="5" y="6" width="1" height="1"/><rect x="6" y="6" width="1" height="1"/><rect x="0" y="8" width="1" height="1"/><rect x="10" y="8" width="1" height="1"/><rect x="0" y="9" width="1" height="1"/><rect x="10" y="9" width="1" height="1"/><rect x="0" y="10" width="1" height="1"/><rect x="1" y="10" width="1" height="1"/><rect x="2" y="10" width="1" height="1"/><rect x="3" y="10" width="1" height="1"/><rect x="4" y="10" width="1" height="1"/><rect x="5" y="10" width="1" height="1"/><rect x="6" y="10" width="1" height="1"/><rect x="7" y="10" width="1" height="1"/><rect x="8" y="10" width="1" height="1"/><rect x="9" y="10" width="1" height="1"/><rect x="10" y="10" width="1" height="1"/></svg><span>ABRIR</span></button>
+      </div>
+        <div class="dial" id="dial" aria-label="Línea de tiempo: pulsa para elegir dónde empieza"><canvas id="dialCv"></canvas><div class="red" id="red"></div><div class="glass"></div></div>
+        <div class="tunewell"><div class="tune" id="wheel" role="slider" tabindex="0" aria-label="Sintonía: punto de inicio de la reproducción"><div class="tune-ring" id="tuneRing"></div><div class="tune-shade"></div><div class="tune-cap"></div><div class="tune-rot" id="tuneRot"><i class="dimple"></i></div></div></div>
+        <div class="pad"><button class="tk play" id="playSrc" aria-label="Escuchar desde la línea roja"></button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ LB-2 · CONVERSOR ============ -->
+  <section class="plate unit" aria-label="Conversor">
+    <i class="screw tl"></i><i class="screw tr"></i><i class="screw bl"></i><i class="screw br"></i>
+    <span class="unitname">LB-2 · Conversor</span>
+
+    <div class="modebar">
+      <div class="pad" id="modeSw" role="radiogroup" aria-label="Modo"><button class="tk" role="radio" data-mode="manual" aria-checked="false"><b>MANUAL</b></button><button class="tk" role="radio" data-mode="preset" aria-checked="true"><b>PRESET</b></button></div>
+      <button class="info" data-info="mode2" aria-label="Manual o preset">i</button>
+      <div class="display out" id="display2" aria-live="polite"><span class="olbl">SALIDA</span><div class="dcol"><div class="dl" id="d3"></div><div class="dl st" id="d4"></div></div></div>
+    </div>
+
+    <div class="stage" id="stage" data-mode="preset">
+      <div id="manualBox" class="deckrow">
+      <div class="deckgrp">
+        <div class="padrow">
+          <div class="padcol"><div class="phead"><span class="silk">Códec</span><button class="info" data-info="fmt" aria-label="Qué es el códec">i</button></div><div class="pad" id="deck" role="radiogroup" aria-label="Códec"></div></div>
+          <div class="padcol"><div class="phead"><span class="silk">Canales</span><button class="info" data-info="mono" aria-label="Qué hace mono">i</button></div><div class="pad" id="segCh" role="radiogroup" aria-label="Canales"></div></div>
+        </div>
+        <div class="padrow">
+          <div class="padcol"><div class="phead"><span class="silk">Contenedor</span><button class="info" data-info="cont" aria-label="Qué es el contenedor">i</button></div><div class="pad" id="segBox" role="radiogroup" aria-label="Contenedor"></div></div>
+          <div class="padcol aacopt" id="aacOpts"><div class="phead"><span class="silk">Bitrate</span><button class="info" data-info="mode" aria-label="Qué es CBR y VBR">i</button></div><div class="pad" id="segMode" role="radiogroup" aria-label="Modo de bitrate"></div></div>
+          <div class="padcol aacopt" id="aacOpts2"><div class="phead"><span class="silk">Perfil AAC</span><button class="info" data-info="prof" aria-label="Qué es el perfil AAC">i</button></div><div class="pad" id="segProf" role="radiogroup" aria-label="Perfil AAC"></div></div>
+        </div>
+      </div>
+      <div class="knobrow">
+        <div class="ctl"><div class="kwrap" id="kQ"></div><div class="ktitle"><span class="silk" id="qTitle">Calidad</span><button class="info" data-info="q" aria-label="Qué es la calidad">i</button></div></div>
+        <div class="ctl"><div class="kwrap" id="kRate"></div><div class="ktitle"><span class="silk">Muestreo</span><button class="info" data-info="rate" aria-label="Qué es el muestreo">i</button></div></div>
+        <div class="ctl"><div class="kwrap" id="kNorm"></div><div class="ktitle"><span class="silk">Normalizar</span><button class="info" data-info="norm" aria-label="Qué hace normalizar">i</button></div></div>
+      </div>
+    </div>
+
+      <div class="cover navcover" id="navCover">
+        <i class="screw tl"></i><i class="screw tr"></i><i class="screw bl"></i><i class="screw br"></i>
+        <div class="nav crt-dark" id="nav" tabindex="0" aria-label="Navegador de presets: flechas para moverte, Intro para elegir, escribe para buscar">
+          <div class="navin">
+          <div class="navtop"><label class="nq" for="navQ">BUSCAR ▸</label><input id="navQ" placeholder="AUDI A4, PSP, LDAC, CDJ…" autocomplete="off" spellcheck="false"><span class="ncount" id="navCount"></span><button class="nbtn" id="reqBtn">＋ PEDIR</button></div>
+          <div class="navbody" id="navBody"></div>
+          <div class="navdet" id="navDet"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="convrow">
+      <div class="grille" aria-hidden="true"></div>
+      <div class="pad"><button class="tk rec" id="convertBtn"><i class="ring"></i><i class="dot"></i><span class="lbl" id="convertTxt">CONVERTIR</span></button></div>
+    </div>
+  </section>
+
+  <!-- ============ LB-3 · ETIQUETA ============ -->
+  <section class="plate unit" aria-label="Etiqueta: carátula y datos">
+    <i class="screw tl"></i><i class="screw tr"></i><i class="screw bl"></i><i class="screw br"></i>
+    <span class="unitname">LB-3 · Etiqueta</span>
+    <div class="jcard">
+      <div class="sleeve-wrap" id="sleeveWrap">
+        <div class="vinyl" id="vinyl"><div class="disc" id="disc"><i class="vlabel" id="vlabel"></i></div></div>
+        <button class="cov" id="covBox" aria-label="Cambiar carátula"><span id="covNone">SIN<br>CARÁTULA</span><img id="covImg" alt="" hidden><span class="x" id="covX" hidden>SE QUITA</span></button>
+      </div>
+      <div class="jmain">
+        <div class="jhead"><span class="jtitle" id="jtitle">—</span><button class="info" data-info="tags" aria-label="Para qué sirven las etiquetas">i</button><button class="key jkey" id="tagsBtn" aria-expanded="false" aria-controls="tagForm">Editar datos</button></div>
+        <div class="jrow"><span class="silk">Carátula</span><div class="pad mini" id="segCover" role="radiogroup" aria-label="Tamaño de carátula"></div><button class="key jkey" id="coverPick">Cambiar</button><button class="info" data-info="cover" aria-label="Por qué importa la carátula">i</button></div>
+        <div class="jnote" id="coverNote"></div>
+        <div class="jrow" id="id3Row"><span class="silk">MP3</span><div class="pad mini" id="segId3"></div><button class="info" data-info="id3" aria-label="Qué es ID3">i</button></div>
+        <div class="tagform" id="tagForm" hidden></div>
+      </div>
+      <input type="file" id="coverIn" accept="image/jpeg,image/png,image/webp" hidden>
+    </div>
+  </section>
+
+  <section aria-label="Archivos convertidos">
+    <div class="phead" style="margin:0 4px 10px"><span class="silk">Salidas</span></div>
+    <div class="outs" id="outs"></div>
+  </section>
+</div>
+<div class="pop" id="pop" role="dialog" hidden></div>
+<div class="toast" id="toast" role="status"></div>
+<script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
+<script src="js/core.js"></script>
+<script src="js/codecs/mp4.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/codecs/encoders.js"></script>
+<script src="js/zip.js"></script>
+<script src="js/measure.js"></script>
+<script src="js/meta.js"></script>
+<script src="js/codecs/aiff-opus.js"></script>
+<script src="js/codecs/alac.js"></script>
+<script src="js/presets.js"></script>
+<script src="js/ui/nav.js"></script>
+<script src="js/ui/controls.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
