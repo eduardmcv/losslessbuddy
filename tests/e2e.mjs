@@ -25,6 +25,8 @@ const CASES = [
   { o: { fmt: 'flac', bits: 16, mono: true }, codec: 'flac', channels: 1 },
   { o: { fmt: 'mp3', kbps: 320, rate: 44100 }, codec: 'mp3', needs: 'mp3' },
   { o: { fmt: 'aac', kbps: 256, rate: 44100 }, codec: 'aac', needs: 'aac' },
+  { o: { fmt: 'aac', kbps: 128, rate: 44100, aacCont: 'adts' }, codec: 'aac', needs: 'aacAdts' },
+  { o: { fmt: 'aac', kbps: 96, rate: 48000, mono: true, aacCont: 'm4b' }, codec: 'aac', rate: 48000, channels: 1, needs: 'aac' },
   { o: { fmt: 'opus', kbps: 128 }, codec: 'opus', rate: 48000, needs: 'opus' },
 ];
 
@@ -39,6 +41,7 @@ await page.goto(page_url);
 await page.waitForFunction(() => typeof S !== 'undefined' && S.an, null, { timeout: 60000 });
 
 console.log(`Lossless Buddy · ${target}/index.html`);
+const srcDur = await page.evaluate(() => S.src.dur);
 const an = await page.evaluate(() => ({ name: S.src.name, verdict: S.an.v.s, label: S.an.v.t, cutoff: S.an.cut.hz, full: S.an.cut.full, lufs: S.an.lufs, tags: S.tags }));
 ok(['good', 'warn', 'doubt', 'bad'].includes(an.verdict), `${an.name}: verdict "${an.label}" (cutoff ${an.full ? 'none' : (an.cutoff / 1000).toFixed(1) + ' kHz'})`);
 ok(isFinite(an.lufs) && an.lufs < 0 && an.lufs > -40, `integrated loudness measured (${an.lufs.toFixed(1)} LUFS)`);
@@ -59,9 +62,10 @@ for (const c of CASES) {
   const label = `${c.o.fmt.toUpperCase()} ${JSON.stringify(c.o).replace(/"/g, '')}`;
   const res = await page.evaluate(async c => {
     if (c.needs && !S.eng[c.needs]) return { skip: true };
-    const o = { ...BASE, ...c.o }, rate = o.rate || S.src.rate;
+    const o = { ...BASE, ...c.o }, want = o.rate || S.src.rate, rates = FMT[o.fmt].rates;
+    const rate = rates && !rates.includes(want) ? rates[0] : want;
     const { chans } = await processAudio(S.src.buffer, o, rate);
-    const data = await encodeOne(o, chans, FMT[o.fmt].rates ? (FMT[o.fmt].rates.includes(rate) ? rate : FMT[o.fmt].rates[0]) : rate, () => {});
+    const data = await encodeOne(o, chans, rate, () => {});
     return { ext: extOf(o), b64: btoa(Array.from(data, b => String.fromCharCode(b)).join('')) };
   }, c);
   if (res.skip) { console.log(`  – ${label}: encoder not available in this browser, skipped`); continue }
@@ -69,10 +73,13 @@ for (const c of CASES) {
   writeFileSync(file, Buffer.from(res.b64, 'base64'));
   if (!hasFfprobe) { ok(true, `${label} encoded`); continue }
   try {
-    const s = JSON.parse(execFileSync('ffprobe', ['-v', 'error', '-show_streams', '-of', 'json', file])).streams[0];
-    execFileSync('ffmpeg', ['-v', 'error', '-xerror', '-i', file, '-f', 'null', '-']);
+    const probe = JSON.parse(execFileSync('ffprobe', ['-v', 'error', '-show_streams', '-show_format', '-of', 'json', file]));
+    const s = probe.streams[0];
+    const pcm = execFileSync('ffmpeg', ['-v', 'error', '-i', file, '-map', '0:a', '-f', 's16le', '-ac', '1', '-'], { maxBuffer: 1 << 28 });
+    const dur = pcm.length / 2 / +s.sample_rate, kbps = Math.round((s.bit_rate || probe.format.bit_rate) / 1000);
     ok(s.codec_name === c.codec && +s.sample_rate === (c.rate || 44100) && s.channels === (c.channels || 2),
-      `${label} → ${s.codec_name}, ${s.sample_rate} Hz, ${s.channels} ch, decodes cleanly`);
+      `${label} → ${s.codec_name}, ${s.sample_rate} Hz, ${s.channels} ch, ${dur.toFixed(2)} s${c.o.kbps ? ', ' + kbps + ' kbps' : ''}, decodes cleanly`);
+    ok(Math.abs(dur - srcDur) < 0.1, `${label} decoded duration ${dur.toFixed(2)} s matches source (${srcDur.toFixed(2)} s)`);
   } catch (e) { ok(false, `${label}: ${e.message.split('\n')[0]}`) }
 }
 
