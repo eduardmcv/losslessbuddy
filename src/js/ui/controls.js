@@ -18,7 +18,7 @@ function buildMeter(){
     <text x="120" y="106" text-anchor="middle" font-size="15" fill="#2b2d31" font-family="Barlow Condensed, sans-serif" font-weight="600">kHz</text>
     <text x="120" y="119" text-anchor="middle" font-size="7.5" letter-spacing="2" fill="#6b6e74" font-family="Barlow Condensed, sans-serif">CORTE DE AGUDOS</text>
     <g id="needle"><line x1="120" y1="178" x2="120" y2="48" stroke="#d8261b" stroke-width="1.7" stroke-linecap="round"/></g>
-    <circle cx="120" cy="152" r="17" fill="#202328"/><circle cx="120" cy="152" r="9" fill="#5d636c"/><path d="M114 146l12 12M126 146l-12 12" stroke="#2a2d32" stroke-width="2"/>
+    <circle cx="120" cy="178" r="36" fill="#202328"/><circle cx="120" cy="178" r="36" fill="none" stroke="#3a3e45" stroke-width="1.5"/><circle cx="120" cy="178" r="24" fill="#4f555d"/><path d="M114 160l12 12M126 160l-12 12" stroke="#2a2d32" stroke-width="2"/>
     <rect width="240" height="150" fill="url(#mg)"/>
     <rect x="1.5" y="1.5" width="237" height="147" rx="5" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="3"/>`;
 }
@@ -44,7 +44,7 @@ function loop(now){
   const dt=Math.min(.05,(now-last)/1000);last=now;
   if(reduce){needle.cur=needle.target}else{const k=70,c=2*Math.sqrt(k)*.5,a=k*(needle.target-needle.cur)-c*needle.v;needle.v+=a*dt;needle.cur+=needle.v*dt;
     if(needle.cur>1.06){needle.cur=1.06;needle.v*=-.3}if(needle.cur<-.04){needle.cur=-.04;needle.v*=-.3}}
-  const jit=S.an&&!reduce?(Math.sin(now*.0019)*.55+Math.sin(now*.0043+1.7)*.3+Math.sin(now*.0117+.4)*.15)*.028:0;
+  const jit=S.an&&!reduce?(Math.sin(now*.0007)*.6+Math.sin(now*.0016+1.7)*.3+Math.sin(now*.0029+.4)*.1)*.024:0;
   const ng=document.getElementById('needle');if(ng)ng.setAttribute('transform',`rotate(${(-M.ang+2*M.ang*(needle.cur+jit)).toFixed(2)} 120 178)`);
   if(playing&&playing.src&&AC){playing.cur=Math.min(dur(),playing.off+AC.currentTime-playing.t0);placeRed(playing.cur)}
   if(live){
