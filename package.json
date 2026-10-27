@@ -6,8 +6,9 @@
   "license": "MIT",
   "scripts": {
     "build": "node build.mjs",
-    "test": "node build.mjs && node tests/e2e.mjs dist",
-    "test:src": "node tests/e2e.mjs src"
+    "test": "node build.mjs && node tests/e2e.mjs dist && node tests/detector.mjs dist",
+    "test:src": "node tests/e2e.mjs src",
+    "test:detector": "node tests/detector.mjs dist"
   },
   "devDependencies": {
     "playwright": "^1.49.0"

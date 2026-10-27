@@ -70,6 +70,8 @@ npm run build      # inline everything into dist/index.html
 npm test           # build, then run the end-to-end encoder checks
 ```
 
+`tests/detector.mjs` calibrates the fake-lossless detector: it builds real and MP3-transcoded fixtures with FFmpeg (including TPDF and noise-shaped dither, which hide a lossy lowpass from naive threshold detection) and checks each verdict and estimated bitrate.
+
 The end-to-end test loads the app in headless Chromium, checks the analysis and tag reading on the preview track, and encodes it to every format the browser supports. If `ffprobe` is installed, each output is then decoded with FFmpeg and its codec, sample rate and channel count are verified.
 
 ## Browser support
