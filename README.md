@@ -45,10 +45,11 @@ No frameworks and no bundler; it ships as one HTML file. Every container format 
 ```
 src/
 ├── index.html            markup + script order
+├── assets/               preview track (inlined into dist at build time)
 ├── css/                  design tokens (dark/light) and faceplate styles
 └── js/
     ├── core.js           helpers, format matrix, help texts, app state
-    ├── audio.js          header sniffing, demo signal, processing chain
+    ├── audio.js          header sniffing, fallback demo signal, processing chain
     ├── measure.js        BS.1770 loudness, true peak, DR, fake detection
     ├── meta.js           tag/cover read and write
     ├── presets.js        device preset database
@@ -68,7 +69,7 @@ npm run build      # inline everything into dist/index.html
 npm test           # build, then run the end-to-end encoder checks
 ```
 
-The end-to-end test loads the app in headless Chromium, checks the analyzer verdict on the built-in demo, and encodes it to every format the browser supports. If `ffprobe` is installed, each output is then decoded with FFmpeg and its codec, sample rate and channel count are verified.
+The end-to-end test loads the app in headless Chromium, checks the analysis and tag reading on the preview track, and encodes it to every format the browser supports. If `ffprobe` is installed, each output is then decoded with FFmpeg and its codec, sample rate and channel count are verified.
 
 ## Browser support
 
@@ -76,4 +77,6 @@ The analyzer and the lossless encoders run in any modern browser. AAC and Opus d
 
 ## License
 
-[MIT](LICENSE)
+Code: [MIT](LICENSE).
+
+Preview track: "Jungle Breakbeat" by Musinova, from [Pixabay](https://pixabay.com/music/) under the Pixabay Content License (20-second excerpt).
