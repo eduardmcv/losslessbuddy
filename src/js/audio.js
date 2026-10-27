@@ -86,7 +86,15 @@ function findCutoff(db,fs,N){
   const topN=Math.max(4,Math.round(bins*.02)),tail=Array.from(sm.subarray(bins-topN-2,bins-2)).sort((a,b)=>a-b),floor=tail[tail.length>>1];
   const thr=ref-85;void floor;
   let ci=bins-1;for(let i=bins-3;i>0;i--){if(sm[i]>thr){ci=i;break}}
-  const cutHz=ci*hz,nyq=fs/2,d=Math.max(2,Math.round(500/hz));
+  const nyq=fs/2,d=Math.max(2,Math.round(500/hz));
+  // Dither or noise-shaped requantisation leaves a faint floor above a lossy lowpass, so
+  // "last bin above threshold" lands at Nyquist. Look for the wall itself: the steepest
+  // drop above 10 kHz, with nothing past it ever coming back near the level below it.
+  const g=Math.max(1,Math.round(150/hz)),end=bins-2,avg=(a,b)=>{let s=0;for(let i=a;i<b;i++)s+=sm[i];return s/(b-a)};
+  let best=0,bi=-1;
+  for(let i=Math.round(10000/hz);i<Math.min(end-d,Math.round((nyq-400)/hz));i++){const dr=avg(i-d,i-g)-avg(i+g,i+d);if(dr>best){best=dr;bi=i}}
+  if(bi>0&&best>=18){let top=-300;for(let i=bi+d;i<end;i++)top=Math.max(top,sm[i]);if(top<avg(bi-d,bi-g)-12)ci=Math.min(ci,bi)}
+  const cutHz=ci*hz;
   let mx=-300;for(let i=Math.max(0,ci-2*d);i<=ci;i++)mx=Math.max(mx,sm[i]);const drop=mx-sm[Math.min(bins-1,ci+d)];
   const full=cutHz>=nyq*.96||(fs<=48000&&cutHz>=21000);
   return{hz:cutHz,sharp:!full&&drop>22,full,drop};
@@ -95,7 +103,7 @@ function verdict(){
   const a=S.an,c=a.cut,k=c.hz/1000,src=S.src,ll=isLossless(src.fmt);
   if(c.full)return{s:'good',t:ll?'Lossless real':'Espectro completo',d:'Contenido hasta Nyquist, sin corte'};
   if(c.sharp){
-    let g=k<11.5?'MP3 ≤ 64 kbps':k<15.4?'MP3 96–112 kbps':k<16.6?'MP3 128 kbps':k<19.3?'MP3 160–192 kbps':k<20.3?'MP3 V0–256 / AAC':'MP3 320 kbps';
+    let g=k<11.5?'MP3 ≤ 64 kbps':k<15.4?'MP3 96–112 kbps':k<16.6?'MP3 128 kbps':k<19.3?'MP3 160–192 kbps':k<20?'MP3 V0–256 / AAC':'MP3 320 kbps';
     if(a.fs>50000&&k<=24.5)g='upsample de 44.1/48 kHz';
     return ll?{s:'bad',t:'Probable transcode',d:`Corte brusco a ${num(k)} kHz: patrón ${g}`}:{s:'warn',t:'Con pérdida',d:`Corte a ${num(k)} kHz: patrón ${g}`};
   }

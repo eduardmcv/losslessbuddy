@@ -90,7 +90,7 @@ function fakeSignals(sp,fs,src){
   let fake24=false;
   if(src.bits===24){fake24=true;const x=sp.chans0;for(let i=0;i<x.length&&fake24;i+=7){const v=x[i]*32768;if(Math.abs(v-Math.round(v))>1e-3)fake24=false}}
   const k=cut.hz/1000;
-  const est=k<11.5?'MP3 ≤ 64 kbps':k<15.5?'MP3 96–112 kbps':k<17.3?'MP3 128 kbps':k<18?'MP3 160 kbps':k<19.3?'MP3 192 kbps':k<20.2?'MP3 224–256 / AAC 256':'MP3 320 kbps';
+  const est=k<11.5?'MP3 ≤ 64 kbps':k<15.5?'MP3 96–112 kbps':k<17.3?'MP3 128 kbps':k<18?'MP3 160 kbps':k<19.3?'MP3 192 kbps':k<20?'MP3 224–256 / AAC 256':'MP3 320 kbps';
   return{cut,drop:cut.drop,wall:cut.drop>25,wallStrong:cut.drop>40,constant:segStd<400,segStd,segN:segCuts.length,holes,holesSig:holes>.04,hires:fs>=88200&&cut.hz<30000,fake24,est};
 }
 function judge(g,src,fs){
