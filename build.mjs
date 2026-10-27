@@ -9,6 +9,8 @@ const read = p => readFileSync(join(src, p), 'utf8').trimEnd();
 
 let html = read('index.html')
   .replace(/<link rel="stylesheet" href="(css\/[^"]+)">/g, (_, p) => `<style>\n${read(p)}\n</style>`)
+  .replace(/(<script type="application\/octet-stream" id="\w+" data-src="([^"]+)">)(<\/script>)/g,
+    (_, open, p, close) => `${open}${readFileSync(join(src, p)).toString('base64')}${close}`)
   .replace(/<script src="(js\/[^"]+)"><\/script>/g, (_, p) => {
     const code = read(p);
     if (/<\/script/i.test(code)) throw new Error(`${p} contains a closing script tag`);

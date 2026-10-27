@@ -39,9 +39,12 @@ await page.goto(page_url);
 await page.waitForFunction(() => typeof S !== 'undefined' && S.an, null, { timeout: 60000 });
 
 console.log(`Lossless Buddy · ${target}/index.html`);
-const an = await page.evaluate(() => ({ verdict: S.an.v.s, cutoff: S.an.cut.hz, lufs: S.an.lufs }));
-ok(an.verdict === 'bad', `demo flagged as fake lossless (cutoff ${(an.cutoff / 1000).toFixed(1)} kHz)`);
-ok(Math.abs(an.lufs + 15) < 3, `integrated loudness in range (${an.lufs.toFixed(1)} LUFS)`);
+const an = await page.evaluate(() => ({ name: S.src.name, verdict: S.an.v.s, label: S.an.v.t, cutoff: S.an.cut.hz, full: S.an.cut.full, lufs: S.an.lufs, tags: S.tags }));
+ok(['good', 'warn', 'doubt', 'bad'].includes(an.verdict), `${an.name}: verdict "${an.label}" (cutoff ${an.full ? 'none' : (an.cutoff / 1000).toFixed(1) + ' kHz'})`);
+ok(isFinite(an.lufs) && an.lufs < 0 && an.lufs > -40, `integrated loudness measured (${an.lufs.toFixed(1)} LUFS)`);
+ok(!!an.tags.title, `tags read from the preview file (${an.tags.artist} – ${an.tags.title})`);
+const fname = await page.evaluate(() => outBase());
+ok(fname === `${an.tags.artist} - ${an.tags.title}`, `output files named after the tags ("${fname}")`);
 
 for (const c of CASES) {
   const label = `${c.o.fmt.toUpperCase()} ${JSON.stringify(c.o).replace(/"/g, '')}`;

@@ -125,16 +125,19 @@
     <i class="screw tl"></i><i class="screw tr"></i><i class="screw bl"></i><i class="screw br"></i>
     <span class="unitname">LB-3 · Etiqueta</span>
     <div class="jcard">
-      <div class="sleeve-wrap" id="sleeveWrap">
-        <div class="vinyl" id="vinyl"><div class="disc" id="disc"><i class="vlabel" id="vlabel"></i></div></div>
-        <button class="cov" id="covBox" aria-label="Cambiar carátula"><span id="covNone">SIN<br>CARÁTULA</span><img id="covImg" alt="" hidden><span class="x" id="covX" hidden>SE QUITA</span></button>
-      </div>
       <div class="jmain">
-        <div class="jhead"><span class="jtitle" id="jtitle">—</span><button class="info" data-info="tags" aria-label="Para qué sirven las etiquetas">i</button><button class="key jkey" id="tagsBtn" aria-expanded="false" aria-controls="tagForm">Editar datos</button></div>
-        <div class="jrow"><span class="silk">Carátula</span><div class="pad mini" id="segCover" role="radiogroup" aria-label="Tamaño de carátula"></div><button class="key jkey" id="coverPick">Cambiar</button><button class="info" data-info="cover" aria-label="Por qué importa la carátula">i</button></div>
-        <div class="jnote" id="coverNote"></div>
+        <div class="jhead"><span class="jtitle" id="jtitle">—</span><button class="info" data-info="tags" aria-label="Para qué sirven las etiquetas">i</button></div>
+        <div class="tagform" id="tagForm"></div>
         <div class="jrow" id="id3Row"><span class="silk">MP3</span><div class="pad mini" id="segId3"></div><button class="info" data-info="id3" aria-label="Qué es ID3">i</button></div>
-        <div class="tagform" id="tagForm" hidden></div>
+      </div>
+      <div class="jside">
+        <div class="sleeve-wrap" id="sleeveWrap">
+          <div class="vinyl" id="vinyl"><div class="disc" id="disc"><i class="vlabel" id="vlabel"></i></div></div>
+          <button class="cov" id="covBox" aria-label="Cambiar carátula"><span id="covNone">SIN<br>CARÁTULA</span><img id="covImg" alt="" hidden><span class="x" id="covX" hidden>SE QUITA</span></button>
+        </div>
+        <div class="jrow"><span class="silk">Carátula</span><button class="info" data-info="cover" aria-label="Por qué importa la carátula">i</button><button class="key jkey" id="coverPick">Cambiar</button></div>
+        <div class="pad mini" id="segCover" role="radiogroup" aria-label="Tamaño de carátula"></div>
+        <div class="jnote" id="coverNote"></div>
       </div>
       <input type="file" id="coverIn" accept="image/jpeg,image/png,image/webp" hidden>
     </div>
@@ -147,6 +150,7 @@
 </div>
 <div class="pop" id="pop" role="dialog" hidden></div>
 <div class="toast" id="toast" role="status"></div>
+<script type="application/octet-stream" id="previewData" data-src="assets/preview.flac"></script>
 <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
 <script src="js/core.js"></script>
 <script src="js/codecs/mp4.js"></script>
