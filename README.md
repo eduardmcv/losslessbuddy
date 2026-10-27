@@ -2,6 +2,8 @@
 
 An audio converter and analyzer that runs entirely in the browser, designed as a piece of retro rack hardware. Drop in a file and it tells you whether that "lossless" FLAC is really a re-encoded MP3, measures its loudness, and converts it to whatever your car stereo, iPod, DJ deck or streaming platform actually plays. Nothing is uploaded: decoding, analysis and encoding all happen client-side.
 
+**[Live demo →](https://eduardmcv.github.io/losslessbuddy/)**
+
 ![Analyzer unit](docs/analyzer.png)
 
 ## Features
