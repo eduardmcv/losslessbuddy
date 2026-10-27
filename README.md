@@ -80,4 +80,4 @@ The analyzer, the lossless encoders and AAC-LC (CBR) run in any modern browser: 
 
 Code: [MIT](LICENSE). Bundled third-party code: see [src/vendor/NOTICE.md](src/vendor/NOTICE.md) (FFmpeg AAC encoder, MPL-2.0 / LGPL-2.1+).
 
-Preview track: "Jungle Breakbeat" by Musinova, from [Pixabay](https://pixabay.com/music/) under the Pixabay Content License (20-second excerpt).
+Preview track: 20-second excerpt of "Fire And Water" by BerryDeep.

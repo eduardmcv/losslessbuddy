@@ -247,7 +247,7 @@ function renderOuts(){
     ${q.zip?'<span class="key sq" aria-hidden="true" style="cursor:default">ZIP</span>':`<button class="key sq" data-play="${q.id}" aria-label="Escuchar ${q.name}">${ICON_PLAY}</button>`}
     <div><div class="n">${q.name}</div><div class="s">${q.spec} · ${q.preset}</div>${q.note?`<div class="note">${q.note}</div>`:''}</div>
     <div class="sz">${fmtBytes(q.data.length)}</div>
-    <button class="key save" data-dl="${q.id}">${ICON_DL}<span>${q.zip?'Guardar pack':'Guardar .zip'}</span></button></div>`).join('');
+    <button class="key save" data-dl="${q.id}">${ICON_DL}<span>${q.zip?'Descargar pack':S.dlZip?'Descargar .zip':'Descargar .'+q.name.split('.').pop()}</span></button></div>`).join('');
 }
 
 /* ---------- events ---------- */
@@ -323,9 +323,10 @@ async function previewBytes(){
     if(S.eng.aac){S.eng.aacVbr=await chk({bitrateMode:'variable'});S.eng.aacAdts=await chk({aac:{format:'adts'}});S.eng.aacHe=await chk({codec:'mp4a.40.5',bitrate:64000})}
     try{S.eng.opus=!!(await AudioEncoder.isConfigSupported({codec:'opus',sampleRate:48000,numberOfChannels:2,bitrate:128000})).supported}catch(e){}}}catch(e){}
   if(typeof createAacModule!=='undefined'&&typeof WebAssembly==='object'){S.eng.aac=true;S.eng.aacAdts=true}
+  S.dlZip=!!(window.claude&&window.claude.use);
   ensureSupported();renderAll();
   const pv=await previewBytes();
-  if(pv){await loadFile(new File([pv],'Musinova - Jungle Breakbeat.flac'));if(S.src){S.src.demo=true;renderAll()}return}
+  if(pv){await loadFile(new File([pv],'BerryDeep - Fire And Water.flac'));if(S.src){S.src.demo=true;renderAll()}return}
   try{const cv=document.createElement('canvas');cv.width=cv.height=1400;const x=cv.getContext('2d'),g=x.createLinearGradient(0,0,1400,1400);g.addColorStop(0,'#ff7a45');g.addColorStop(.55,'#c8432f');g.addColorStop(1,'#2b1a4a');x.fillStyle=g;x.fillRect(0,0,1400,1400);
     x.strokeStyle='rgba(255,255,255,.85)';x.lineWidth=18;for(let i=0;i<9;i++){x.beginPath();x.arc(700,700,90+i*60,0,7);x.globalAlpha=1-i*.1;x.stroke()}x.globalAlpha=1;
     x.fillStyle='#fff';x.font='bold 120px sans-serif';x.textAlign='center';x.fillText('LOSSLESS',700,1230);
