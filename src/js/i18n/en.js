@@ -355,12 +355,12 @@ const I18N_EN={
   "Archivos convertidos":"Converted files",
   "Codificadores disponibles":"Available encoders",
   "FIN":"END",
-  "Anuncio vintage: una pareja escuchando con auriculares en un sofá.":"Vintage ad: a couple listening on headphones on a sofa.",
+  "Anuncio vintage: una pareja escuchando con auriculares en un sofá. Warm. Rich. Detailed. She wasn’t talking about the sound.":"Vintage ad: a couple listening on headphones on a sofa. Warm. Rich. Detailed. She wasn’t talking about the sound.",
   "Cerrar":"Close",
 };
 // Identical in both languages (brands, models, codec names): listed so coverage checks pass.
 const I18N_SAME=[
-  "Warm. Rich. Detailed.", "Attractive audiophiles exist",
+  "Attractive audiophiles exist",
   "WAV", "FLAC",
   "Bluetooth", "DJ", "Audi", "A3 8P · Concert / Symphony", "A4 B8 · MMI 3G", "Q5 8R · MMI 3G", "A6 C7 · MMI 3G+", "A4 B9 · MMI (MIB2)",
   "BMW", "Ford", "Focus · SYNC 1", "Focus / Kuga · SYNC 3", "Mercedes", "MBUX", "Peugeot / Citroën", "RD4 / RD5",
