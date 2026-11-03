@@ -542,3 +542,20 @@ body.is-playing .disc{animation:spin 1.8s linear infinite}
   .stripes{height:21px}.stripes i{width:6px}
   .brand .model{flex-basis:100%;padding-left:2px}
 }
+
+/* bottom banner: a vintage print with a wider bottom margin for the caption */
+.ad{position:fixed;z-index:45;left:50%;bottom:14px;width:min(760px,calc(100vw - 24px));transform:translateX(-50%);padding:10px 10px 0;border-radius:16px;background:#efe6cf;
+  box-shadow:0 18px 40px rgba(0,0,0,.55),inset 0 0 0 1px rgba(0,0,0,.08);transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .3s}
+.ad.off{transform:translate(-50%,calc(100% + 24px));opacity:0;pointer-events:none}
+.adimg{position:relative;container-type:inline-size;border-radius:8px;overflow:hidden}
+.adimg img{display:block;width:100%;height:auto}
+.adhl{position:absolute;right:3.2%;top:15.5%;margin:0;font-family:"Libre Caslon Text",Georgia,serif;font-size:4.9cqw;line-height:1;letter-spacing:-.01em;color:#5a1216;white-space:nowrap}
+.adcap{display:flex;align-items:center;justify-content:space-between;gap:12px;height:46px;padding:0 4px 0 8px}
+.adcap a{font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-size:19px;color:#6b1418;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px;text-decoration-color:rgba(107,20,24,.45)}
+.adcap a:hover,.adcap a:focus-visible{text-decoration-color:#6b1418}
+.adcap .ar{display:inline-block;font-style:normal;margin-left:6px;transition:transform .2s}
+.adcap a:hover .ar{transform:translate(2px,-2px)}
+.adx{appearance:none;border:0;width:32px;height:32px;border-radius:50%;background:transparent;color:#6b1418;font-size:21px;line-height:1;cursor:pointer;display:grid;place-items:center}
+.adx:hover{background:rgba(107,20,24,.1)}
+body.has-ad{padding-bottom:calc(min(760px,100vw - 24px) * .2344 + 90px)}
+@media (max-width:520px){.adcap a{font-size:15px}.adcap{height:40px}}

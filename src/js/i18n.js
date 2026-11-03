@@ -9,7 +9,7 @@ function T(s,p){
   return p?r.replace(/\{(\w+)\}/g,(_,k)=>p[k]??''):r;
 }
 // Static markup: remember each node's source text once, then translate from it on every switch.
-const I18N_ATTRS=['aria-label','title','placeholder'],srcText=new WeakMap(),srcAttr=new WeakMap();
+const I18N_ATTRS=['aria-label','title','placeholder','alt'],srcText=new WeakMap(),srcAttr=new WeakMap();
 function applyStatic(root=document.body){
   const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentElement.closest('script,style,svg,[data-dyn]')?NodeFilter.FILTER_REJECT:/\S/.test(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT});
   for(let n;n=w.nextNode();){if(!srcText.has(n))srcText.set(n,n.nodeValue);const src=srcText.get(n),t=src.trim();n.nodeValue=src.replace(t,T(t))}

@@ -301,6 +301,12 @@ function setLang(l){
   if(S.an)S.an.v=judge(S.an.g,S.src,S.an.fs);
   closeInfo();applyStatic();renderLangSw();buildMeter();renderTagForm();renderAll();renderOuts();restLadder();drawDial();if(S.an&&S.scopeOpen)drawSpec();
 }
+/* bottom banner: shown once per visit, slides away when closed */
+function showAd(){
+  const ad=$('#ad');try{if(sessionStorage.getItem('lb-ad-closed'))return}catch(e){}
+  ad.classList.add('off');ad.hidden=false;document.body.classList.add('has-ad');requestAnimationFrame(()=>requestAnimationFrame(()=>ad.classList.remove('off')));
+  $('#adClose').addEventListener('click',()=>{ad.classList.add('off');document.body.classList.remove('has-ad');try{sessionStorage.setItem('lb-ad-closed','1')}catch(e){}setTimeout(()=>{ad.hidden=true},reduce?0:500)},{once:true});
+}
 async function previewBytes(){
   const el=$('#previewData');if(!el)return null;const b=el.textContent.trim();
   if(b){const s=atob(b),u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u}
@@ -315,7 +321,7 @@ async function previewBytes(){
   S.src={name:'demo_sospechoso.flac',size:0,fmt:'FLAC',bits:16,rate:44100,ch:2,dur:buf.duration,buffer:buf,demo:true};
   try{const w=encWAV([0,1].map(c=>buf.getChannelData(c)),buf.sampleRate,32,false);S.src.raw=w.buffer.slice(w.byteOffset,w.byteOffset+w.byteLength)}catch(e){}
   S.tags={...emptyTags(),title:'Demo sospechoso',artist:'Lossless Buddy',album:'Muestras de prueba',track:'1/1',year:'2026',genre:'Electronic'};
-  bindDial();bindNav();locate(curEntry());$('#manualBox').inert=true;resetDial();renderTagForm();renderAll();renderOuts();restLadder();requestAnimationFrame(loop);setTimeout(()=>crt(S.mode==='preset'),reduce?0:400);
+  bindDial();bindNav();locate(curEntry());$('#manualBox').inert=true;resetDial();renderTagForm();renderAll();renderOuts();restLadder();requestAnimationFrame(loop);setTimeout(()=>crt(S.mode==='preset'),reduce?0:400);setTimeout(showAd,reduce?0:1200);
   try{if('AudioEncoder' in window){const r=await AudioEncoder.isConfigSupported({codec:'mp4a.40.2',sampleRate:44100,numberOfChannels:2,bitrate:256000});S.eng.aac=!!r.supported;
     const chk=async c=>{try{return(await AudioEncoder.isConfigSupported({codec:'mp4a.40.2',sampleRate:44100,numberOfChannels:2,bitrate:256000,...c})).supported}catch(e){return false}};
     if(S.eng.aac){S.eng.aacVbr=await chk({bitrateMode:'variable'});S.eng.aacAdts=await chk({aac:{format:'adts'}});S.eng.aacHe=await chk({codec:'mp4a.40.5',bitrate:64000})}

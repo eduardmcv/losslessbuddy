@@ -44,7 +44,7 @@ const runtime = await page.evaluate(() => {
   out.push('alta', 'media', 'baja');
   const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, { acceptNode: n => n.parentElement.closest('script,style,svg,[data-dyn]') ? 2 : /\S/.test(n.nodeValue) ? 1 : 2 });
   for (let n; n = w.nextNode();) out.push(n.nodeValue.trim());
-  document.querySelectorAll('[aria-label],[title],[placeholder]').forEach(el => { if (!el.closest('[data-dyn]')) ['aria-label', 'title', 'placeholder'].forEach(a => el.hasAttribute(a) && out.push(el.getAttribute(a))) });
+  document.querySelectorAll('[aria-label],[title],[placeholder],[alt]').forEach(el => { if (!el.closest('[data-dyn]')) ['aria-label', 'title', 'placeholder', 'alt'].forEach(a => el.hasAttribute(a) && out.push(el.getAttribute(a))) });
   return out;
 });
 await browser.close();
