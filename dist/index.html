@@ -2965,11 +2965,11 @@ function setLang(l){
   if(S.an)S.an.v=judge(S.an.g,S.src,S.an.fs);
   closeInfo();applyStatic();renderLangSw();buildMeter();renderTagForm();renderAll();renderOuts();restLadder();drawDial();if(S.an&&S.scopeOpen)drawSpec();
 }
-/* bottom banner: shown once per visit, slides away when closed */
+/* bottom banner: shown on every page load, slides away when closed */
 function showAd(){
-  const ad=$('#ad');try{if(sessionStorage.getItem('lb-ad-closed'))return}catch(e){}
+  const ad=$('#ad');
   ad.classList.add('off');ad.hidden=false;document.body.classList.add('has-ad');requestAnimationFrame(()=>requestAnimationFrame(()=>ad.classList.remove('off')));
-  $('#adClose').addEventListener('click',()=>{ad.classList.add('off');document.body.classList.remove('has-ad');try{sessionStorage.setItem('lb-ad-closed','1')}catch(e){}setTimeout(()=>{ad.hidden=true},reduce?0:500)},{once:true});
+  $('#adClose').addEventListener('click',()=>{ad.classList.add('off');document.body.classList.remove('has-ad');setTimeout(()=>{ad.hidden=true},reduce?0:500)},{once:true});
 }
 async function previewBytes(){
   const el=$('#previewData');if(!el)return null;const b=el.textContent.trim();
