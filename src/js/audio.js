@@ -91,13 +91,17 @@ function findCutoff(db,fs,N){
   // "last bin above threshold" lands at Nyquist. Look for the wall itself: the steepest
   // drop above 10 kHz, with nothing past it ever coming back near the level below it.
   const g=Math.max(1,Math.round(150/hz)),end=bins-2,avg=(a,b)=>{let s=0;for(let i=a;i<b;i++)s+=sm[i];return s/(b-a)};
-  let best=0,bi=-1;
+  let best=0,bi=-1,wall=0;
   for(let i=Math.round(10000/hz);i<Math.min(end-d,Math.round((nyq-400)/hz));i++){const dr=avg(i-d,i-g)-avg(i+g,i+d);if(dr>best){best=dr;bi=i}}
-  if(bi>0&&best>=18){let top=-300;for(let i=bi+d;i<end;i++)top=Math.max(top,sm[i]);if(top<avg(bi-d,bi-g)-12)ci=Math.min(ci,bi)}
+  if(bi>0&&best>=18){let top=-300;for(let i=bi+d;i<end;i++)top=Math.max(top,sm[i]);
+    if(top<avg(bi-d,bi-g)-12){
+      // Encoders roll off before the wall; the cutoff is where the music last stands clear of the floor past it.
+      const fl=avg(bi+d,end);let k=bi;while(k+1<end&&sm[k+1]>fl+8)k++;
+      wall=bi*hz;if(k<ci)ci=k}}
   const cutHz=ci*hz;
   let mx=-300;for(let i=Math.max(0,ci-2*d);i<=ci;i++)mx=Math.max(mx,sm[i]);const drop=mx-sm[Math.min(bins-1,ci+d)];
   const full=cutHz>=nyq*.96||(fs<=48000&&cutHz>=21000);
-  return{hz:cutHz,sharp:!full&&drop>22,full,drop};
+  return{hz:cutHz,wallHz:wall||cutHz,sharp:!full&&drop>22,full,drop};
 }
 /* ---------- processing ---------- */
 function effRate(){

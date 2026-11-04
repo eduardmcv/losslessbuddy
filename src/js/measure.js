@@ -74,7 +74,7 @@ function fakeSignals(sp,fs,src){
     const a=Math.floor(s*cols/nSeg),e=Math.floor((s+1)*cols/nSeg),p=new Float64Array(bins);let n=0;
     for(let c=a;c<e;c++){if(frameRef[c]<refMed-15)continue;n++;for(let b=0;b<bins;b++)p[b]+=10**(spec[c*bins+b]/10)}
     if(n<2)continue;const db=new Float32Array(bins);for(let b=0;b<bins;b++)db[b]=10*Math.log10(p[b]/n+1e-16);
-    const k=findCutoff(db,fs,N);if(!k.full)segCuts.push(k.hz);
+    const k=findCutoff(db,fs,N);if(!k.full)segCuts.push(k.wallHz);
   }
   let segStd=Infinity;if(segCuts.length>=3){const m=segCuts.reduce((a,b)=>a+b,0)/segCuts.length;segStd=Math.sqrt(segCuts.reduce((a,b)=>a+(b-m)**2,0)/segCuts.length)}
   // holes: 500 Hz bands between 11 kHz and the cutoff that drop out in loud frames
@@ -90,7 +90,7 @@ function fakeSignals(sp,fs,src){
   let fake24=false;
   if(src.bits===24){fake24=true;const x=sp.chans0;for(let i=0;i<x.length&&fake24;i+=7){const v=x[i]*32768;if(Math.abs(v-Math.round(v))>1e-3)fake24=false}}
   const k=cut.hz/1000;
-  const est=k<11.5?'MP3 ≤ 64 kbps':k<15.5?'MP3 96–112 kbps':k<17.3?'MP3 128 kbps':k<18?'MP3 160 kbps':k<19.3?'MP3 192 kbps':k<20?'MP3 224–256 / AAC 256':'MP3 320 kbps';
+  const est=k<11.5?'MP3 ≤ 64 kbps':k<15.5?'MP3 96–112 kbps':k<17.3?'MP3 128 kbps':k<18?'MP3 160 kbps':k<19.1?'MP3 192 kbps':k<20?'MP3 224–256 / AAC 256':'MP3 320 kbps';
   return{cut,drop:cut.drop,wall:cut.drop>25,wallStrong:cut.drop>40,constant:segStd<400,segStd,segN:segCuts.length,holes,holesSig:holes>.04,hires:fs>=88200&&cut.hz<30000,fake24,est};
 }
 function judge(g,src,fs){

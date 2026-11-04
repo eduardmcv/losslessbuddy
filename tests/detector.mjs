@@ -24,12 +24,12 @@ const flac = (input, out, af = tpdf) => ff('-i', at(input), '-sample_fmt', 's16'
 flac('src.wav', 'real_full.flac');
 flac('src.wav', 'real_rolloff.flac', `lowpass=f=9000:poles=1,${tpdf}`);
 flac('src.wav', 'real_brick21k5.flac', `${lp(21500)},${tpdf}`);
-for (const b of [128, 320]) { ff('-i', at('src.wav'), '-c:a', 'libmp3lame', '-b:a', `${b}k`, at(`m${b}.mp3`)); flac(`m${b}.mp3`, `mp3_${b}.flac`) }
+for (const b of [128, 192, 320]) { ff('-i', at('src.wav'), '-c:a', 'libmp3lame', '-b:a', `${b}k`, at(`m${b}.mp3`)); flac(`m${b}.mp3`, `mp3_${b}.flac`) }
 flac('m320.mp3', 'mp3_320_shaped.flac', 'aresample=dither_method=shibata');
 
 const CASES = [
   ['real_full.flac', 'good'], ['real_rolloff.flac', 'good'], ['real_brick21k5.flac', 'good'],
-  ['mp3_128.flac', 'bad', /128/], ['mp3_320.flac', 'bad', /320/], ['mp3_320_shaped.flac', 'bad', /320/],
+  ['mp3_128.flac', 'bad', /128/], ['mp3_192.flac', 'bad', /192/], ['mp3_320.flac', 'bad', /320/], ['mp3_320_shaped.flac', 'bad', /320/],
 ];
 
 const browser = await chromium.launch();
