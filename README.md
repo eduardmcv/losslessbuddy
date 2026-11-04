@@ -86,4 +86,4 @@ The analyzer, the lossless encoders and AAC-LC (CBR) run in any modern browser: 
 
 Code: [MIT](LICENSE). Bundled third-party code: see [src/vendor/NOTICE.md](src/vendor/NOTICE.md) (FFmpeg AAC encoder, MPL-2.0 / LGPL-2.1+).
 
-Preview track: 20-second excerpt of "Fire And Water" by BerryDeep.
+Preview track: 20-second excerpt of "Swing Jazz" by Aurec, from [Pixabay](https://pixabay.com/music/marching-band-swing-jazz-585971/) under the Pixabay Content License, converted from its 256 kbps MP3 so the analyzer has something to catch.

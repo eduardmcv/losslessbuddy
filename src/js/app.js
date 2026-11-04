@@ -179,7 +179,7 @@ async function download(item,btn){
 const canEncode=f=>f==='aac'?!!S.eng.aac:f==='mp3'?!!S.eng.mp3:f==='opus'?!!S.eng.opus:true;
 function qualityLine(br){
   const a=S.an,s=S.src;if(!a)return T('CALIDAD REAL: ANALIZANDO…');
-  const v=a.v,g=a.g,k=num(a.cut.hz/1000),kc=a.cut.hz/1000,cls=kc<11.5?64:kc<15.5?112:kc<17.3?128:kc<18?160:kc<19.3?192:kc<20?256:320;
+  const v=a.v,g=a.g,k=num(a.cut.hz/1000),kc=a.cut.hz/1000,cls=kc<11.5?64:kc<15.5?112:kc<17.3?128:kc<18?160:kc<19.1?192:kc<20?256:320;
   if(!isLossless(s.fmt)){
     const fake=br&&!a.cut.full&&br>=cls*1.45;
     return fake?T('CALIDAD REAL ≈ {est} (INFLADO A {br} KBPS)',{est:g.est.toUpperCase(),br}):`${T('CALIDAD REAL:')} ${s.fmt} ${br?br+' KBPS':''}${a.cut.full?'':' · '+T('CORTE')+' '+k+' KHZ'}`;
@@ -330,7 +330,7 @@ async function previewBytes(){
   S.dlZip=!!(window.claude&&window.claude.use);
   ensureSupported();renderAll();
   const pv=await previewBytes();
-  if(pv){await loadFile(new File([pv],'BerryDeep - Fire And Water.flac'));if(S.src){S.src.demo=true;renderAll()}return}
+  if(pv){await loadFile(new File([pv],'Aurec - Swing Jazz.flac'));if(S.src){S.src.demo=true;renderAll()}return}
   try{const cv=document.createElement('canvas');cv.width=cv.height=1400;const x=cv.getContext('2d'),g=x.createLinearGradient(0,0,1400,1400);g.addColorStop(0,'#ff7a45');g.addColorStop(.55,'#c8432f');g.addColorStop(1,'#2b1a4a');x.fillStyle=g;x.fillRect(0,0,1400,1400);
     x.strokeStyle='rgba(255,255,255,.85)';x.lineWidth=18;for(let i=0;i<9;i++){x.beginPath();x.arc(700,700,90+i*60,0,7);x.globalAlpha=1-i*.1;x.stroke()}x.globalAlpha=1;
     x.fillStyle='#ffffff';x.font='bold 120px sans-serif';x.textAlign='center';x.fillText('LOSSLESS',700,1230);
